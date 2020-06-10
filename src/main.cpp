@@ -17,7 +17,6 @@ void initWindow(std::string wName = "Test Window", const int width = 800, const 
 
 	// Set GLFW to NOT work with OpenGL
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	// prevnet to resize our windows. Very paintful.
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	window = glfwCreateWindow(width, height, wName.c_str(), nullptr, nullptr);
