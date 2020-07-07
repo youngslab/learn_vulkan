@@ -24,7 +24,7 @@ find_package(Vulkan REQUIRED)
 
 # add_subdirectory(3rd_party)
 
-add_executable(learn_vulkan src/main.cpp src/VulkanRenderer.cpp)
+add_executable(learn_vulkan src/main.cpp src/VulkanRenderer.cpp src/Mesh.cpp)
 
 target_link_libraries(learn_vulkan Vulkan::Vulkan glm::glm glfw::glfw fmt::fmt)
 
