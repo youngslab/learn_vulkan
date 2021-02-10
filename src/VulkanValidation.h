@@ -2,7 +2,7 @@
 
 #include <vector>
 
-const bool validationEnabled = true;
+const bool validationEnabled = false;
 
 // List of validation layers to use
 // VK_LAYER_LUNARG_standard_validation = All standard validation layers
