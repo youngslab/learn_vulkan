@@ -6,6 +6,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include <stdexcept>
 #include <vector>
 #include <set>
@@ -15,6 +19,7 @@
 #include "stb_image.h"
 
 #include "Mesh.h"
+#include "MeshModel.h"
 #include "VulkanValidation.h"
 #include "Utilities.h"
 
@@ -25,6 +30,7 @@ public:
 
 	int init(GLFWwindow * newWindow);
 
+	int createMeshModel(std::string modelFile);
 	void updateModel(int modelId, glm::mat4 newModel);
 
 	void draw();
@@ -38,7 +44,7 @@ private:
 	int currentFrame = 0;
 
 	// Scene Objects
-	std::vector<Mesh> meshList;
+	std::vector<MeshModel> modelList;
 
 	// Scene Settings
 	struct UboViewProjection {
@@ -171,6 +177,7 @@ private:
 	int createTextureImage(std::string fileName);
 	int createTexture(std::string fileName);
 	int createTextureDescriptor(VkImageView textureImage);
+
 
 	// -- Loader Functions
 	stbi_uc * loadTextureFile(std::string fileName, int * width, int * height, VkDeviceSize * imageSize);

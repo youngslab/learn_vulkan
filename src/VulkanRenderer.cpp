@@ -33,43 +33,12 @@ int VulkanRenderer::init(GLFWwindow * newWindow)
 		createSynchronisation();
 
 		uboViewProjection.projection = glm::perspective(glm::radians(45.0f), (float)swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
-		uboViewProjection.view = glm::lookAt(glm::vec3(2.0f, 0.0f, 2.0f), glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		uboViewProjection.view = glm::lookAt(glm::vec3(100.0f, 0.0f, 20.0f), glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		uboViewProjection.projection[1][1] *= -1;
 
-		// Create a mesh
-		// Vertex Data
-		std::vector<Vertex> meshVertices = {
-			{ { -0.4, 0.4, 0.0 },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } },	// 0
-		{ { -0.4, -0.4, 0.0 },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } },	    // 1
-		{ { 0.4, -0.4, 0.0 },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },    // 2
-		{ { 0.4, 0.4, 0.0 },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } },   // 3
-		};
-
-		std::vector<Vertex> meshVertices2 = {
-			{ { -0.25, 0.6, 0.0 },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },	// 0
-		{ { -0.25, -0.6, 0.0 },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } },	    // 1
-		{ { 0.25, -0.6, 0.0 },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },    // 2
-		{ { 0.25, 0.6, 0.0 },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } },   // 3
-		};
-
-		// Index Data
-		std::vector<uint32_t> meshIndices = {
-			0, 1, 2,
-			2, 3, 0
-		};
-
-		Mesh firstMesh = Mesh(mainDevice.physicalDevice, mainDevice.logicalDevice,
-			graphicsQueue, graphicsCommandPool,
-			&meshVertices, &meshIndices,
-			createTexture("giraffe.jpg"));
-		Mesh secondMesh = Mesh(mainDevice.physicalDevice, mainDevice.logicalDevice,
-			graphicsQueue, graphicsCommandPool,
-			&meshVertices2, &meshIndices,
-			createTexture("panda.jpg"));
-
-		meshList.push_back(firstMesh);
-		meshList.push_back(secondMesh);
+		// Create our default "no texture" texture
+		createTexture("plain.png");
 	}
 	catch (const std::runtime_error &e) {
 		printf("ERROR: %s\n", e.what());
@@ -81,9 +50,9 @@ int VulkanRenderer::init(GLFWwindow * newWindow)
 
 void VulkanRenderer::updateModel(int modelId, glm::mat4 newModel)
 {
-	if (modelId >= meshList.size()) return;
+	if (modelId >= modelList.size()) return;
 
-	meshList[modelId].setModel(newModel);
+	modelList[modelId].setModel(newModel);
 }
 
 void VulkanRenderer::draw()
@@ -151,6 +120,11 @@ void VulkanRenderer::cleanup()
 
 	//_aligned_free(modelTransferSpace);
 
+	for (size_t i = 0; i < modelList.size(); i++)
+	{
+		modelList[i].destroyMeshModel();
+	}
+
 	vkDestroyDescriptorPool(mainDevice.logicalDevice, samplerDescriptorPool, nullptr);
 	vkDestroyDescriptorSetLayout(mainDevice.logicalDevice, samplerSetLayout, nullptr);
 
@@ -175,10 +149,6 @@ void VulkanRenderer::cleanup()
 		vkFreeMemory(mainDevice.logicalDevice, vpUniformBufferMemory[i], nullptr);
 		//vkDestroyBuffer(mainDevice.logicalDevice, modelDUniformBuffer[i], nullptr);
 		//vkFreeMemory(mainDevice.logicalDevice, modelDUniformBufferMemory[i], nullptr);
-	}
-	for (size_t i = 0; i < meshList.size(); i++)
-	{
-		meshList[i].destroyBuffers();
 	}
 	for (size_t i = 0; i < MAX_FRAME_DRAWS; i++)
 	{
@@ -1168,37 +1138,45 @@ void VulkanRenderer::recordCommands(uint32_t currentImage)
 			// Bind Pipeline to be used in render pass
 			vkCmdBindPipeline(commandBuffers[currentImage], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-			for (size_t j = 0; j < meshList.size(); j++)
+			for (size_t j = 0; j < modelList.size(); j++)
 			{
-				VkBuffer vertexBuffers[] = { meshList[j].getVertexBuffer() };					// Buffers to bind
-				VkDeviceSize offsets[] = { 0 };												// Offsets into buffers being bound
-				vkCmdBindVertexBuffers(commandBuffers[currentImage], 0, 1, vertexBuffers, offsets);	// Command to bind vertex buffer before drawing with them
-
-				// Bind mesh index buffer, with 0 offset and using the uint32 type
-				vkCmdBindIndexBuffer(commandBuffers[currentImage], meshList[j].getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
-				// Dynamic Offset Amount
-				// uint32_t dynamicOffset = static_cast<uint32_t>(modelUniformAlignment) * j;
-
-				// "Push" constants to given shader stage directly (no buffer)
-				auto model = meshList[j].getModel();
+				MeshModel thisModel = modelList[j];
+				
+				auto model = thisModel.getModel();
 				vkCmdPushConstants(
 					commandBuffers[currentImage],
 					pipelineLayout,
 					VK_SHADER_STAGE_VERTEX_BIT,		// Stage to push constants to
 					0,								// Offset of push constants to update
 					sizeof(Model),					// Size of data being pushed
-					&model);		// Actual data being pushed (can be array)
+					&model);			// Actual data being pushed (can be array)
 
-				std::array<VkDescriptorSet, 2> descriptorSetGroup = { descriptorSets[currentImage],
-					samplerDescriptorSets[meshList[j].getTexId()] };
+				for (size_t k = 0; k < thisModel.getMeshCount(); k++)
+				{
 
-				// Bind Descriptor Sets
-				vkCmdBindDescriptorSets(commandBuffers[currentImage], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout,
-					0, static_cast<uint32_t>(descriptorSetGroup.size()), descriptorSetGroup.data(), 0, nullptr);
+					VkBuffer vertexBuffers[] = { thisModel.getMesh(k)->getVertexBuffer() };					// Buffers to bind
+					VkDeviceSize offsets[] = { 0 };												// Offsets into buffers being bound
+					vkCmdBindVertexBuffers(commandBuffers[currentImage], 0, 1, vertexBuffers, offsets);	// Command to bind vertex buffer before drawing with them
 
-				// Execute pipeline
-				vkCmdDrawIndexed(commandBuffers[currentImage], meshList[j].getIndexCount(), 1, 0, 0, 0);
+					// Bind mesh index buffer, with 0 offset and using the uint32 type
+					vkCmdBindIndexBuffer(commandBuffers[currentImage], thisModel.getMesh(k)->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+					// Dynamic Offset Amount
+					// uint32_t dynamicOffset = static_cast<uint32_t>(modelUniformAlignment) * j;
+
+					// "Push" constants to given shader stage directly (no buffer)
+
+
+					std::array<VkDescriptorSet, 2> descriptorSetGroup = { descriptorSets[currentImage],
+						samplerDescriptorSets[thisModel.getMesh(k)->getTexId()] };
+
+					// Bind Descriptor Sets
+					vkCmdBindDescriptorSets(commandBuffers[currentImage], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout,
+						0, static_cast<uint32_t>(descriptorSetGroup.size()), descriptorSetGroup.data(), 0, nullptr);
+
+					// Execute pipeline
+					vkCmdDrawIndexed(commandBuffers[currentImage], thisModel.getMesh(k)->getIndexCount(), 1, 0, 0, 0);
+				}
 			}
 
 		// End Render Pass
@@ -1767,6 +1745,48 @@ int VulkanRenderer::createTextureDescriptor(VkImageView textureImage)
 
 	// Return descriptor set location
 	return samplerDescriptorSets.size() - 1;
+}
+
+int VulkanRenderer::createMeshModel(std::string modelFile)
+{
+	// Import model "scene"
+	Assimp::Importer importer;
+	const aiScene *scene = importer.ReadFile(modelFile, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
+	if (!scene)
+	{
+		throw std::runtime_error("Failed to load model! (" + modelFile + ")");
+	}
+
+	// Get vector of all materials with 1:1 ID placement
+	std::vector<std::string> textureNames = MeshModel::LoadMaterials(scene);
+
+	// Conversion from the materials list IDs to our Descriptor Array IDs
+	std::vector<int> matToTex(textureNames.size());
+
+	// Loop over textureNames and create textures for them
+	for (size_t i = 0; i < textureNames.size(); i++)
+	{
+		// If material had no texture, set '0' to indicate no texture, texture 0 will be reserved for a default texture
+		if (textureNames[i].empty())
+		{
+			matToTex[i] = 0;
+		}
+		else
+		{
+			// Otherwise, create texture and set value to index of new texture
+			matToTex[i] = createTexture(textureNames[i]);
+		}
+	}
+
+	// Load in all our meshes
+	std::vector<Mesh> modelMeshes = MeshModel::LoadNode(mainDevice.physicalDevice, mainDevice.logicalDevice, graphicsQueue, graphicsCommandPool,
+		scene->mRootNode, scene, matToTex);
+
+	// Create mesh model and add to list
+	MeshModel meshModel = MeshModel(modelMeshes);
+	modelList.push_back(meshModel);
+
+	return modelList.size() - 1;
 }
 
 stbi_uc * VulkanRenderer::loadTextureFile(std::string fileName, int * width, int * height, VkDeviceSize * imageSize)

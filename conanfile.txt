@@ -2,6 +2,7 @@
 glm/0.9.9.5@g-truc/stable
 glfw/3.3.2@bincrafters/stable
 fmt/6.0.0@bincrafters/stable
+Assimp/4.1.0@jacmoe/stable
 
 [generators] 
 cmake_find_package

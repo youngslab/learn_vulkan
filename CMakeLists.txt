@@ -14,19 +14,23 @@ conan_cmake_run(CONANFILE conanfile.txt
     BASIC_SETUP CMAKE_TARGETS
     BUILD missing)
   
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_BINARY_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH} )
 
 # find_package(vulkan REQUIRED)
 find_package(glm REQUIRED)
 find_package(glfw REQUIRED)
 find_package(fmt REQUIRED)
 find_package(Vulkan REQUIRED)
+find_package(IrrXML REQUIRED)
+find_package(Assimp REQUIRED)
 
 # add_subdirectory(3rd_party)
 
-add_executable(learn_vulkan src/main.cpp src/VulkanRenderer.cpp src/Mesh.cpp)
+add_executable(learn_vulkan src/main.cpp src/VulkanRenderer.cpp src/Mesh.cpp
+	src/MeshModel.cpp)
 
-target_link_libraries(learn_vulkan Vulkan::Vulkan glm::glm glfw::glfw fmt::fmt)
+target_link_libraries(learn_vulkan Vulkan::Vulkan glm::glm glfw::glfw fmt::fmt
+	Assimp::Assimp)
 
 target_include_directories(learn_vulkan 
   PUBLIC
