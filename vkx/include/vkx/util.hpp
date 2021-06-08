@@ -48,10 +48,16 @@ auto GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice device)
 
 auto ValidatePhysicalDevice(VkPhysicalDevice device) -> bool;
 
+auto IsFormatSupported(VkPhysicalDevice device, VkFormat format,
+		       VkImageTiling tiling, VkFormatFeatureFlags featureFlags)
+    -> bool;
+
 auto ChoosePhysicalDevice(VkInstance instance, VkSurfaceKHR surface)
     -> VkPhysicalDevice;
 
 auto ChoosePhysicalDevice(VkInstance instance, VkSurfaceKHR surface,
 			  std::vector<std::string> const &requiredExtensions)
     -> VkPhysicalDevice;
+
+auto ReadFile(const std::string &filename) -> std::vector<char>;
 } // namespace vkx

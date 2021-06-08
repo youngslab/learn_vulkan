@@ -3,9 +3,11 @@
 #include <vkx/util.hpp>
 #include <vkx/raii.hpp>
 #include <iostream>
+#include <fstream>
 #include <vulkan/vulkan_core.h>
 
 namespace vkx {
+
 auto validate(std::vector<std::string> const &required,
 	      std::vector<std::string> const &available) -> bool {
 
@@ -236,6 +238,44 @@ auto GetSwapcahinImages(VkDevice device, VkSwapchainKHR swapchain)
   vkGetSwapchainImagesKHR(device, swapchain, &count, images.data());
 
   return images;
+}
+
+auto IsFormatSupported(VkPhysicalDevice device, VkFormat format,
+		       VkImageTiling tiling, VkFormatFeatureFlags featureFlags)
+    -> bool {
+
+  VkFormatProperties properties;
+  vkGetPhysicalDeviceFormatProperties(device, format, &properties);
+
+  // features are not flags. ex) 0x10
+  if (tiling == VK_IMAGE_TILING_LINEAR) {
+    auto masked = properties.linearTilingFeatures & featureFlags;
+    return masked == featureFlags;
+  }
+
+  if (tiling == VK_IMAGE_TILING_OPTIMAL) {
+    auto masked = properties.optimalTilingFeatures & featureFlags;
+    return masked == featureFlags;
+  }
+
+  return false;
+}
+
+auto ReadFile(const std::string &filename) -> std::vector<char> {
+  std::ifstream file(filename, std::ios::binary | std::ios::ate);
+
+  if (!file.is_open()) {
+    throw std::runtime_error("Failed to open a file!");
+  }
+
+  size_t fileSize = (size_t)file.tellg();
+  std::vector<char> fileBuffer(fileSize);
+
+  file.seekg(0);
+  file.read(fileBuffer.data(), fileSize);
+  file.close();
+
+  return fileBuffer;
 }
 
 } // namespace vkx

@@ -222,7 +222,7 @@ auto ImageView::Create(Device const &device,
 }
 
 auto ShaderModule::Create(Device const &device,
-			  const VkShaderModuleCreateInfo &createInfo,
+			  const VkShaderModuleCreateInfo *pCreateInfo,
 			  const VkAllocationCallbacks *pAllocator)
     -> ShaderModule {
   auto shaderModule = std::shared_ptr<VkShaderModule>(
@@ -232,7 +232,7 @@ auto ShaderModule::Create(Device const &device,
       });
 
   auto res =
-      vkCreateShaderModule(device, &createInfo, pAllocator, shaderModule.get());
+      vkCreateShaderModule(device, pCreateInfo, pAllocator, shaderModule.get());
   if (res != VK_SUCCESS) {
     throw std::runtime_error("failed to create an ShaderModule");
   }
@@ -240,4 +240,86 @@ auto ShaderModule::Create(Device const &device,
   return ShaderModule(shaderModule);
 }
 
+auto RenderPass::Create(Device const &device,
+			const VkRenderPassCreateInfo *pCreateInfo,
+			const VkAllocationCallbacks *pAllocator) -> RenderPass {
+
+  auto renderPass = std::shared_ptr<VkRenderPass>(
+      new VkRenderPass(VK_NULL_HANDLE),
+      [device, pAllocator](VkRenderPass *pRenderPass) {
+	vkDestroyRenderPass(device, *pRenderPass, pAllocator);
+	delete pRenderPass;
+      });
+
+  VkResult result =
+      vkCreateRenderPass(device, pCreateInfo, pAllocator, renderPass.get());
+  if (result != VK_SUCCESS) {
+    throw std::runtime_error("Failed to create a Render Pass!");
+  }
+
+  return RenderPass(renderPass);
+}
+
+auto DescriptorSetLayout::Create(
+    Device const &device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator) -> DescriptorSetLayout {
+
+  auto layout = std::shared_ptr<VkDescriptorSetLayout>(
+      new VkDescriptorSetLayout(VK_NULL_HANDLE),
+      [device, pAllocator](VkDescriptorSetLayout *pLayout) {
+	vkDestroyDescriptorSetLayout(device, *pLayout, pAllocator);
+	delete pLayout;
+      });
+
+  auto result = vkCreateDescriptorSetLayout(device, pCreateInfo, pAllocator,
+					    layout.get());
+  if (result != VK_SUCCESS) {
+    throw std::runtime_error("Failed to create a Descriptor Set Layout!");
+  }
+
+  return DescriptorSetLayout(layout);
+}
+
+auto DescriptorPool::Create(Device const &device,
+			    const VkDescriptorPoolCreateInfo *pCreateInfo,
+			    const VkAllocationCallbacks *pAllocator)
+    -> DescriptorPool {
+
+  auto layout = std::shared_ptr<VkDescriptorPool>(
+      new VkDescriptorPool(VK_NULL_HANDLE),
+      [device, pAllocator](VkDescriptorPool *pLayout) {
+	vkDestroyDescriptorPool(device, *pLayout, pAllocator);
+	delete pLayout;
+      });
+
+  auto result =
+      vkCreateDescriptorPool(device, pCreateInfo, pAllocator, layout.get());
+  if (result != VK_SUCCESS) {
+    throw std::runtime_error("Failed to create a Descriptor Set Layout!");
+  }
+
+  return DescriptorPool(layout);
+}
+
+auto PipelineLayout::Create(Device const &device,
+			    const VkPipelineLayoutCreateInfo *pCreateInfo,
+			    const VkAllocationCallbacks *pAllocator)
+    -> PipelineLayout {
+
+  auto layout = std::shared_ptr<VkPipelineLayout>(
+      new VkPipelineLayout(VK_NULL_HANDLE),
+      [device, pAllocator](VkPipelineLayout *pLayout) {
+	vkDestroyPipelineLayout(device, *pLayout, pAllocator);
+	delete pLayout;
+      });
+
+  auto result =
+      vkCreatePipelineLayout(device, pCreateInfo, pAllocator, layout.get());
+  if (result != VK_SUCCESS) {
+    throw std::runtime_error("Failed to create a Descriptor Set Layout!");
+  }
+
+  return DescriptorPool(layout);
+}
 } // namespace vkx
+

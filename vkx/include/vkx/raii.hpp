@@ -21,8 +21,10 @@ public:
   Resource(std::shared_ptr<T> res) : _res(res) {}
 
   // Converter
-  operator T() { return *_res; }
-  operator T() const { return *_res; }
+  operator T() & { return *_res; }
+  operator T() && = delete;
+  operator T() const & { return *_res; }
+  operator T() const && = delete;
   operator T *() { return _res.get(); }
   operator T *() const { return _res.get(); }
 };
@@ -97,8 +99,8 @@ public:
 		     const VkSwapchainCreateInfoKHR *pCreateInfo,
 		     const VkAllocationCallbacks *pAllocator) -> Swapchain;
 
-  inline auto GetFormat() -> VkFormat { return _format; }
-  inline auto GetExtent() -> VkExtent2D { return _extent; }
+  inline auto GetFormat() const -> VkFormat { return _format; }
+  inline auto GetExtent() const -> VkExtent2D { return _extent; }
 };
 
 class ImageView : public Resource<VkImageView> {
@@ -111,6 +113,16 @@ public:
 		     const VkAllocationCallbacks *pAllocator) -> ImageView;
 };
 
+class RenderPass : public Resource<VkRenderPass> {
+private:
+  using Resource::Resource;
+
+public:
+  static auto Create(Device const &device,
+		     const VkRenderPassCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator) -> RenderPass;
+};
+
 class ShaderModule : public Resource<VkShaderModule> {
 
 private:
@@ -118,8 +130,66 @@ private:
 
 public:
   static auto Create(Device const &device,
-		     const VkShaderModuleCreateInfo &createInfo,
+		     const VkShaderModuleCreateInfo *pCreateInfo,
 		     const VkAllocationCallbacks *pAllocator) -> ShaderModule;
 };
+
+inline auto CreateShaderModule(Device const &device,
+			       const VkShaderModuleCreateInfo *pCreateInfo,
+			       const VkAllocationCallbacks *pAllocator)
+    -> ShaderModule {
+  return ShaderModule::Create(device, pCreateInfo, pAllocator);
+}
+
+class DescriptorSetLayout : public Resource<VkDescriptorSetLayout> {
+private:
+  using Resource::Resource;
+
+public:
+  static auto Create(Device const &device,
+		     const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator)
+      -> DescriptorSetLayout;
+};
+
+inline auto CreateDescriptorSetLayout(
+    Device const &device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator) -> DescriptorSetLayout {
+  return DescriptorSetLayout::Create(device, pCreateInfo, pAllocator);
+}
+
+class DescriptorPool : public Resource<VkDescriptorPool> {
+private:
+  using Resource::Resource;
+
+public:
+  static auto Create(Device const &device,
+		     const VkDescriptorPoolCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator) -> DescriptorPool;
+};
+
+inline auto CreateDescriptorPool(Device const &device,
+				 const VkDescriptorPoolCreateInfo *pCreateInfo,
+				 const VkAllocationCallbacks *pAllocator)
+    -> DescriptorPool {
+  return DescriptorPool::Create(device, pCreateInfo, pAllocator);
+}
+
+class PipelineLayout : public Resource<VkPipelineLayout> {
+private:
+  using Resource::Resource;
+
+public:
+  static auto Create(Device const &device,
+		     const VkPipelineLayoutCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator) -> PipelineLayout;
+};
+
+inline auto CreatePipelineLayout(Device const &device,
+				 const VkPipelineLayoutCreateInfo *pCreateInfo,
+				 const VkAllocationCallbacks *pAllocator)
+    -> PipelineLayout {
+  return PipelineLayout::Create(device, pCreateInfo, pAllocator);
+}
 
 } // namespace vkx

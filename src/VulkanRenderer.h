@@ -84,14 +84,15 @@ private:
   VkSampler textureSampler;
 
   // - Descriptors
-  VkDescriptorSetLayout descriptorSetLayout;
-  VkDescriptorSetLayout samplerSetLayout;
-  VkDescriptorSetLayout inputSetLayout;
+  vkx::DescriptorSetLayout descriptorSetLayout;
+  vkx::DescriptorSetLayout samplerSetLayout;
+  vkx::DescriptorSetLayout inputSetLayout;
   VkPushConstantRange pushConstantRange;
 
-  VkDescriptorPool descriptorPool;
-  VkDescriptorPool samplerDescriptorPool;
-  VkDescriptorPool inputDescriptorPool;
+  vkx::DescriptorPool descriptorPool;
+  vkx::DescriptorPool samplerDescriptorPool;
+  vkx::DescriptorPool inputDescriptorPool;
+
   std::vector<VkDescriptorSet> descriptorSets;
   std::vector<VkDescriptorSet> samplerDescriptorSets;
   std::vector<VkDescriptorSet> inputDescriptorSets;
@@ -119,7 +120,7 @@ private:
   VkPipeline secondPipeline;
   VkPipelineLayout secondPipelineLayout;
 
-  VkRenderPass renderPass;
+  vkx::RenderPass renderPass;
 
   // - Pools
   VkCommandPool graphicsCommandPool;
@@ -137,8 +138,8 @@ private:
   void createSurface();
   void createSwapChain();
   void createSwapchainImages();
-  void createRenderPass();
   void createDescriptorSetLayout();
+
   void createPushConstantRange();
   void createGraphicsPipeline();
   void createColourBufferImage();
