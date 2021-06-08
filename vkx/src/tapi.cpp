@@ -18,9 +18,7 @@ auto MakePipelineDepthStencilStateCreateInfo()
   depthStencilCreateInfo.depthTestEnable = VK_TRUE;
   depthStencilCreateInfo.depthWriteEnable = VK_TRUE;
   depthStencilCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
-
   depthStencilCreateInfo.depthBoundsTestEnable = VK_FALSE;
-
   depthStencilCreateInfo.stencilTestEnable = VK_FALSE; // Enable Stencil Test
   return depthStencilCreateInfo;
 }
@@ -648,8 +646,9 @@ auto MakeScissor(VkOffset2D offset, VkExtent2D extent) -> VkRect2D {
   return {offset, extent};
 }
 
-auto MakePipelineViewportStateCreateInfo(std::vector<VkViewport> viewports,
-					 std::vector<VkRect2D> scissors)
+auto MakePipelineViewportStateCreateInfo(
+    std::vector<VkViewport> const &viewports,
+    std::vector<VkRect2D> const &scissors)
     -> VkPipelineViewportStateCreateInfo {
 
   VkPipelineViewportStateCreateInfo createInfo = {};

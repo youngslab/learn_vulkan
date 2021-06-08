@@ -30,6 +30,7 @@ int VulkanRenderer::init(vkx::Window const &window) {
     createPushConstantRange();
 
     createGraphicsPipeline();
+
     createColourBufferImage();
     createDepthBufferImage();
     createFramebuffers();
@@ -185,11 +186,6 @@ void VulkanRenderer::cleanup() {
   for (auto framebuffer : swapChainFramebuffers) {
     vkDestroyFramebuffer(mainDevice.logicalDevice, framebuffer, nullptr);
   }
-  vkDestroyPipeline(mainDevice.logicalDevice, secondPipeline, nullptr);
-  vkDestroyPipelineLayout(mainDevice.logicalDevice, secondPipelineLayout,
-			  nullptr);
-  vkDestroyPipeline(mainDevice.logicalDevice, graphicsPipeline, nullptr);
-  vkDestroyPipelineLayout(mainDevice.logicalDevice, pipelineLayout, nullptr);
 }
 
 VulkanRenderer::~VulkanRenderer() {}
@@ -354,78 +350,38 @@ void VulkanRenderer::createGraphicsPipeline() {
       vkx::helper::MakePipelineColorBlendStateCreateInfo(colorStates);
 
   // -- PIPELINE LAYOUT --
-  std::array<VkDescriptorSetLayout, 2> descriptorSetLayouts = {
+  std::vector<VkDescriptorSetLayout> descriptorSetLayouts = {
       descriptorSetLayout, samplerSetLayout};
 
-  VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
-  pipelineLayoutCreateInfo.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-  pipelineLayoutCreateInfo.setLayoutCount =
-      static_cast<uint32_t>(descriptorSetLayouts.size());
-  pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayouts.data();
-  pipelineLayoutCreateInfo.pushConstantRangeCount = 1;
-  pipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;
+  auto pushConstants = std::vector{this->pushConstantRange};
+
+  auto pipelineLayoutCreateInfo =
+      vkx::MakePipelineLayoutCreateInfo(descriptorSetLayouts, pushConstants);
 
   // Create Pipeline Layout
-  VkResult result = vkCreatePipelineLayout(mainDevice.logicalDevice,
-					   &pipelineLayoutCreateInfo, nullptr,
-					   &pipelineLayout);
-  if (result != VK_SUCCESS) {
-    throw std::runtime_error("Failed to create Pipeline Layout!");
-  }
+  this->pipelineLayout =
+      vkx::CreatePipelineLayout(device, &pipelineLayoutCreateInfo, nullptr);
 
   // -- DEPTH STENCIL TESTING --
   auto depthStencilCreateInfo =
       vkx::helper::MakePipelineDepthStencilStateCreateInfo();
 
-  // -- GRAPHICS PIPELINE CREATION --
-  VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
-  pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-  // 1. stage info
-  pipelineCreateInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
-  pipelineCreateInfo.pStages = shaderStages.data();
-  // 2.vertex input state
-  pipelineCreateInfo.pVertexInputState =
-      &vertexInputCreateInfo; // All the fixed function pipeline states
-  pipelineCreateInfo.pInputAssemblyState = &inputAssembly;
-  pipelineCreateInfo.pViewportState = &viewportStateCreateInfo;
-  pipelineCreateInfo.pDynamicState = nullptr;
-  pipelineCreateInfo.pRasterizationState = &rasterizerCreateInfo;
-  pipelineCreateInfo.pMultisampleState = &multisamplingCreateInfo;
-  pipelineCreateInfo.pColorBlendState = &colourBlendingCreateInfo;
-  pipelineCreateInfo.pDepthStencilState = &depthStencilCreateInfo;
-  pipelineCreateInfo.layout =
-      pipelineLayout; // Pipeline Layout pipeline should use
-  pipelineCreateInfo.renderPass = renderPass; // Render pass description the
-					      // pipeline is compatible with
-  pipelineCreateInfo.subpass = 0; // Subpass of render pass to use with pipeline
+  // -- GRAPHICS PIPELINE CREATION
+  auto pipelineCreateInfo = vkx::MakeGraphicsPipelineCreateInfo(
+      shaderStages, &vertexInputCreateInfo, &inputAssembly, nullptr,
+      &viewportStateCreateInfo, &rasterizerCreateInfo, &multisamplingCreateInfo,
+      &depthStencilCreateInfo, &colourBlendingCreateInfo, nullptr,
+      pipelineLayout, renderPass, 0, VK_NULL_HANDLE, -1);
 
-  // Pipeline Derivatives : Can create multiple pipelines that derive
-  // from one another for optimisation
-  pipelineCreateInfo.basePipelineHandle =
-      VK_NULL_HANDLE; // Existing pipeline to derive from...
-  pipelineCreateInfo.basePipelineIndex =
-      -1; // or index of pipeline being created to derive from (in case
-	  // creating multiple at once)
-
-  // Create Graphics Pipeline
-  result = vkCreateGraphicsPipelines(mainDevice.logicalDevice, VK_NULL_HANDLE,
-				     1, &pipelineCreateInfo, nullptr,
-				     &graphicsPipeline);
-  if (result != VK_SUCCESS) {
-    throw std::runtime_error("Failed to create a Graphics Pipeline!");
-  }
-
-  //// Destroy Shader Modules, no longer needed after Pipeline created
-  // vkDestroyShaderModule(mainDevice.logicalDevice,
-  // fragmentShaderModule, nullptr);
-  // vkDestroyShaderModule(mainDevice.logicalDevice, vertexShaderModule,
-  // nullptr);
+  this->graphicsPipeline =
+      vkx::CreatePipeline(device, VK_NULL_HANDLE, &pipelineCreateInfo, nullptr);
 
   // CREATE SECOND PASS PIPELINE
   // Second pass shaders
-  vertShader = vkx::CreateShaderModule(device, "Shaders/second_vert.spv");
-  fragShader = vkx::CreateShaderModule(device, "Shaders/second_frag.spv");
+  vertShader = vkx::CreateShaderModule(device, "Shaders/"
+					       "second_vert.spv");
+  fragShader = vkx::CreateShaderModule(device, "Shaders/"
+					       "second_frag.spv");
 
   VkPipelineShaderStageCreateInfo secondShaderStages[] = {
       vkx::MakePipelineShaderStageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT,
@@ -434,44 +390,27 @@ void VulkanRenderer::createGraphicsPipeline() {
 					     fragShader)};
 
   // No vertex data for second pass
-  vertexInputCreateInfo.vertexBindingDescriptionCount = 0;
-  vertexInputCreateInfo.pVertexBindingDescriptions = nullptr;
-  vertexInputCreateInfo.vertexAttributeDescriptionCount = 0;
-  vertexInputCreateInfo.pVertexAttributeDescriptions = nullptr;
+  vertexInputCreateInfo = vkx::MakePipelineVertexInputStateCreateInfo({}, {});
 
-  // Don't want to write to depth buffer
+  // Don't want to write to depth
+  // buffer
   depthStencilCreateInfo.depthWriteEnable = VK_FALSE;
 
   // Create new pipeline layout
-  VkPipelineLayoutCreateInfo secondPipelineLayoutCreateInfo = {};
-  secondPipelineLayoutCreateInfo.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-  secondPipelineLayoutCreateInfo.setLayoutCount = 1;
-  secondPipelineLayoutCreateInfo.pSetLayouts = inputSetLayout;
-  secondPipelineLayoutCreateInfo.pushConstantRangeCount = 0;
-  secondPipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
+  descriptorSetLayouts = {inputSetLayout};
+  auto secondPipelineLayoutCreateInfo =
+      vkx::MakePipelineLayoutCreateInfo(descriptorSetLayouts, {});
 
-  result = vkCreatePipelineLayout(mainDevice.logicalDevice,
-				  &secondPipelineLayoutCreateInfo, nullptr,
-				  &secondPipelineLayout);
-  if (result != VK_SUCCESS) {
-    throw std::runtime_error("Failed to create a Pipeline Layout!");
-  }
+  secondPipelineLayout = vkx::CreatePipelineLayout(
+      device, &secondPipelineLayoutCreateInfo, nullptr);
 
-  pipelineCreateInfo.pStages =
-      secondShaderStages; // Update second shader stage list
-  pipelineCreateInfo.layout =
-      secondPipelineLayout;	  // Change pipeline layout for input
-				  // attachment descriptor sets
-  pipelineCreateInfo.subpass = 1; // Use second subpass
+  pipelineCreateInfo.pStages = secondShaderStages;
+  pipelineCreateInfo.layout = secondPipelineLayout;
+  pipelineCreateInfo.subpass = 1;
 
   // Create second pipeline
-  result =
-      vkCreateGraphicsPipelines(mainDevice.logicalDevice, VK_NULL_HANDLE, 1,
-				&pipelineCreateInfo, nullptr, &secondPipeline);
-  if (result != VK_SUCCESS) {
-    throw std::runtime_error("Failed to create a Graphics Pipeline!");
-  }
+  this->secondPipeline =
+      vkx::CreatePipeline(device, VK_NULL_HANDLE, &pipelineCreateInfo, nullptr);
 }
 
 void VulkanRenderer::createColourBufferImage() {

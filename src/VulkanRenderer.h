@@ -114,11 +114,11 @@ private:
   std::vector<VkImageView> textureImageViews;
 
   // - Pipeline
-  VkPipeline graphicsPipeline;
-  VkPipelineLayout pipelineLayout;
+  vkx::Pipeline graphicsPipeline;
+  vkx::PipelineLayout pipelineLayout;
 
-  VkPipeline secondPipeline;
-  VkPipelineLayout secondPipelineLayout;
+  vkx::Pipeline secondPipeline;
+  vkx::PipelineLayout secondPipelineLayout;
 
   vkx::RenderPass renderPass;
 

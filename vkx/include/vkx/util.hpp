@@ -17,7 +17,34 @@ auto GetRequiredInstanceExtensions() -> std::vector<std::string>;
 
 auto GetRequiredDeviceExtension() -> std::vector<std::string>;
 
-// --------------
+//--------- MAKE --------------
+auto MakePipelineDepthStencilStateCreateInfo(
+    VkBool32 depthTestEnable, VkBool32 depthWriteEnable,
+    VkCompareOp depthCompareOp, VkBool32 depthBoundsTestEnable,
+    VkBool32 stencilTestEnable, VkStencilOpState front, VkStencilOpState back,
+    float minDepthBounds, float maxDepthBounds)
+    -> VkPipelineDepthStencilStateCreateInfo;
+
+auto MakePipelineLayoutCreateInfo(
+    std::vector<VkDescriptorSetLayout> const &layouts,
+    std::vector<VkPushConstantRange> const &contants)
+    -> VkPipelineLayoutCreateInfo;
+
+auto MakeGraphicsPipelineCreateInfo(
+    std::vector<VkPipelineShaderStageCreateInfo> const &stages,
+    const VkPipelineVertexInputStateCreateInfo *pVertexInputState,
+    const VkPipelineInputAssemblyStateCreateInfo *pInputAssemblyState,
+    const VkPipelineTessellationStateCreateInfo *pTessellationState,
+    const VkPipelineViewportStateCreateInfo *pViewportState,
+    const VkPipelineRasterizationStateCreateInfo *pRasterizationState,
+    const VkPipelineMultisampleStateCreateInfo *pMultisampleState,
+    const VkPipelineDepthStencilStateCreateInfo *pDepthStencilState,
+    const VkPipelineColorBlendStateCreateInfo *pColorBlendState,
+    const VkPipelineDynamicStateCreateInfo *pDynamicState,
+    VkPipelineLayout layout, VkRenderPass renderPass, uint32_t subpass,
+    VkPipeline basePipelineHandle, int32_t basePipelineIndex)
+    -> VkGraphicsPipelineCreateInfo;
+//-----------------------------
 
 auto GetWindowExtent(GLFWwindow *window) -> VkExtent2D;
 

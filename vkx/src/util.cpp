@@ -175,6 +175,82 @@ auto GetRequiredDeviceExtension() -> std::vector<std::string> {
   return {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 }
 
+//--------- MAKE --------------
+
+auto MakePipelineDepthStencilStateCreateInfo(
+    VkBool32 depthTestEnable, VkBool32 depthWriteEnable,
+    VkCompareOp depthCompareOp, VkBool32 depthBoundsTestEnable,
+    VkBool32 stencilTestEnable, VkStencilOpState front, VkStencilOpState back,
+    float minDepthBounds, float maxDepthBounds)
+    -> VkPipelineDepthStencilStateCreateInfo {
+  auto createInfo = VkPipelineDepthStencilStateCreateInfo{};
+  createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+  createInfo.depthTestEnable = depthTestEnable;
+  createInfo.depthWriteEnable = depthWriteEnable;
+  createInfo.depthCompareOp = depthCompareOp;
+  createInfo.depthBoundsTestEnable = depthBoundsTestEnable;
+  createInfo.stencilTestEnable = stencilTestEnable;
+  createInfo.front = front;
+  createInfo.back = back;
+  createInfo.minDepthBounds = minDepthBounds;
+  createInfo.maxDepthBounds = maxDepthBounds;
+  return createInfo;
+}
+
+auto MakePipelineLayoutCreateInfo(
+    std::vector<VkDescriptorSetLayout> const &layouts,
+    std::vector<VkPushConstantRange> const &constants)
+    -> VkPipelineLayoutCreateInfo {
+
+  VkPipelineLayoutCreateInfo createInfo = {};
+  createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+  createInfo.setLayoutCount = layouts.size();
+  createInfo.pSetLayouts = layouts.data();
+  createInfo.pushConstantRangeCount = constants.size();
+  createInfo.pPushConstantRanges = constants.data();
+  return createInfo;
+}
+
+auto MakeGraphicsPipelineCreateInfo(
+    std::vector<VkPipelineShaderStageCreateInfo> const &stages,
+    const VkPipelineVertexInputStateCreateInfo *pVertexInputState,
+    const VkPipelineInputAssemblyStateCreateInfo *pInputAssemblyState,
+    const VkPipelineTessellationStateCreateInfo *pTessellationState,
+    const VkPipelineViewportStateCreateInfo *pViewportState,
+    const VkPipelineRasterizationStateCreateInfo *pRasterizationState,
+    const VkPipelineMultisampleStateCreateInfo *pMultisampleState,
+    const VkPipelineDepthStencilStateCreateInfo *pDepthStencilState,
+    const VkPipelineColorBlendStateCreateInfo *pColorBlendState,
+    const VkPipelineDynamicStateCreateInfo *pDynamicState,
+    VkPipelineLayout layout, VkRenderPass renderPass, uint32_t subpass,
+    VkPipeline basePipelineHandle, int32_t basePipelineIndex)
+    -> VkGraphicsPipelineCreateInfo {
+
+  VkGraphicsPipelineCreateInfo createInfo = {};
+  createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+  // 1. stage info
+  createInfo.stageCount = stages.size();
+  createInfo.pStages = stages.data();
+  // 2.vertex input state
+  createInfo.pVertexInputState = pVertexInputState;
+  createInfo.pInputAssemblyState = pInputAssemblyState;
+  createInfo.pTessellationState = pTessellationState;
+  createInfo.pViewportState = pViewportState;
+  createInfo.pRasterizationState = pRasterizationState;
+  createInfo.pMultisampleState = pMultisampleState;
+  createInfo.pDepthStencilState = pDepthStencilState;
+  createInfo.pColorBlendState = pColorBlendState;
+  createInfo.pDynamicState = pDynamicState;
+  createInfo.layout = layout;
+  createInfo.renderPass = renderPass;
+  createInfo.subpass = subpass;
+  createInfo.basePipelineHandle = basePipelineHandle;
+  createInfo.basePipelineIndex = basePipelineIndex;
+  return createInfo;
+}
+
+//-----------------------------
+
 auto ValidateDeviceFeatures(VkPhysicalDevice device) {
   VkPhysicalDeviceFeatures deviceFeatures;
   vkGetPhysicalDeviceFeatures(device, &deviceFeatures);

@@ -119,9 +119,9 @@ auto MakeViewport(float x, float y, float width, float height,
 
 auto MakeScissor(VkOffset2D offset, VkExtent2D extent) -> VkRect2D;
 
-auto MakePipelineViewportStateCreateInfo(std::vector<VkViewport> viewports,
-					 std::vector<VkRect2D> scissors)
-    -> VkPipelineViewportStateCreateInfo;
+auto MakePipelineViewportStateCreateInfo(
+    std::vector<VkViewport> const &viewports,
+    std::vector<VkRect2D> const &scissors) -> VkPipelineViewportStateCreateInfo;
 
 inline auto MakePipeineRasterizationStateCreateInfo(
     VkPipelineRasterizationStateCreateFlags flags, VkBool32 depthClampEnable,

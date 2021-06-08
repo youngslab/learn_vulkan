@@ -192,4 +192,21 @@ inline auto CreatePipelineLayout(Device const &device,
   return PipelineLayout::Create(device, pCreateInfo, pAllocator);
 }
 
+class Pipeline : public Resource<VkPipeline> {
+private:
+  using Resource::Resource;
+
+public:
+  static auto Create(Device const &device, VkPipelineCache pipelineCache,
+		     const VkGraphicsPipelineCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator) -> Pipeline;
+};
+
+inline auto CreatePipeline(Device const &device, VkPipelineCache pipelineCache,
+			   const VkGraphicsPipelineCreateInfo *pCreateInfo,
+			   const VkAllocationCallbacks *pAllocator)
+    -> Pipeline {
+  return Pipeline::Create(device, pipelineCache, pCreateInfo, pAllocator);
+}
+
 } // namespace vkx

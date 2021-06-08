@@ -319,7 +319,27 @@ auto PipelineLayout::Create(Device const &device,
     throw std::runtime_error("Failed to create a Descriptor Set Layout!");
   }
 
-  return DescriptorPool(layout);
+  return PipelineLayout(layout);
+}
+
+auto Pipeline::Create(Device const &device, VkPipelineCache pipelineCache,
+		      const VkGraphicsPipelineCreateInfo *pCreateInfo,
+		      const VkAllocationCallbacks *pAllocator) -> Pipeline {
+
+  auto pipeline = std::shared_ptr<VkPipeline>(
+      new VkPipeline(VK_NULL_HANDLE),
+      [device, pAllocator](VkPipeline *pPipeline) {
+	vkDestroyPipeline(device, *pPipeline, pAllocator);
+	delete pPipeline;
+      });
+
+  auto result = vkCreateGraphicsPipelines(device, pipelineCache, 1, pCreateInfo,
+					  pAllocator, pipeline.get());
+  if (result != VK_SUCCESS) {
+    throw std::runtime_error("Failed to create a Descriptor Set Layout!");
+  }
+
+  return Pipeline(pipeline);
 }
 } // namespace vkx
 
