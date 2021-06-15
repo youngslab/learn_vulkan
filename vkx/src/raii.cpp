@@ -341,5 +341,22 @@ auto Pipeline::Create(Device const &device, VkPipelineCache pipelineCache,
 
   return Pipeline(pipeline);
 }
+
+auto Image::Create(Device const &device, const VkImageCreateInfo *pCreateInfo,
+		   const VkAllocationCallbacks *pAllocator) -> Image {
+
+  auto image = std::shared_ptr<VkImage>(
+      new VkImage(VK_NULL_HANDLE), [device, pAllocator](VkImage *pImage) {
+	vkDestroyImage(device, *pImage, pAllocator);
+	delete pImage;
+      });
+
+  auto result = vkCreateImage(device, pCreateInfo, pAllocator, image.get());
+  if (result != VK_SUCCESS) {
+    throw std::runtime_error("Failed to create a Image!");
+  }
+
+  return Image(image);
+}
 } // namespace vkx
 

@@ -26,9 +26,7 @@ int VulkanRenderer::init(vkx::Window const &window) {
     renderPass =
 	vkx::CreateRenderPass(mainDevice.logicalDevice, swapchain.GetFormat());
     createDescriptorSetLayout();
-
     createPushConstantRange();
-
     createGraphicsPipeline();
 
     createColourBufferImage();
@@ -1089,41 +1087,47 @@ VulkanRenderer::chooseSupportedFormat(const std::vector<VkFormat> &formats,
   throw std::runtime_error("Failed to find a matching format!");
 }
 
-VkImage VulkanRenderer::createImage(uint32_t width, uint32_t height,
-				    VkFormat format, VkImageTiling tiling,
-				    VkImageUsageFlags useFlags,
-				    VkMemoryPropertyFlags propFlags,
-				    VkDeviceMemory *imageMemory) {
+vkx::Image VulkanRenderer::createImage(uint32_t width, uint32_t height,
+				       VkFormat format, VkImageTiling tiling,
+				       VkImageUsageFlags useFlags,
+				       VkMemoryPropertyFlags propFlags,
+				       VkDeviceMemory *imageMemory) {
   // CREATE IMAGE
   // Image Creation Info
-  VkImageCreateInfo imageCreateInfo = {};
-  imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-  imageCreateInfo.imageType = VK_IMAGE_TYPE_2D; // Type of image (1D, 2D, or 3D)
-  imageCreateInfo.extent.width = width;		// Width of image extent
-  imageCreateInfo.extent.height = height;	// Height of image extent
-  imageCreateInfo.extent.depth = 1; // Depth of image (just 1, no 3D aspect)
-  imageCreateInfo.mipLevels = 1;    // Number of mipmap levels
-  imageCreateInfo.arrayLayers = 1;  // Number of levels in image array
-  imageCreateInfo.format = format;  // Format type of image
-  imageCreateInfo.tiling = tiling;  // How image data should be "tiled"
-				    // (arranged for optimal reading)
-  imageCreateInfo.initialLayout =
-      VK_IMAGE_LAYOUT_UNDEFINED; // Layout of image data on creation
-  imageCreateInfo.usage =
-      useFlags; // Bit flags defining what image will be used for
-  imageCreateInfo.samples =
-      VK_SAMPLE_COUNT_1_BIT; // Number of samples for multi-sampling
-  imageCreateInfo.sharingMode =
-      VK_SHARING_MODE_EXCLUSIVE; // Whether image can be shared between queues
+  // VkImageCreateInfo imageCreateInfo = {};
+  // imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  // imageCreateInfo.imageType = VK_IMAGE_TYPE_2D; // Type of image (1D, 2D, or
+  // 3D) imageCreateInfo.extent.width = width;		// Width of image extent
+  // imageCreateInfo.extent.height = height;	// Height of image extent
+  // imageCreateInfo.extent.depth = 1; // Depth of image (just 1, no 3D aspect)
+  // imageCreateInfo.mipLevels = 1;    // Number of mipmap levels
+  // imageCreateInfo.arrayLayers = 1;  // Number of levels in image array
+  // imageCreateInfo.format = format;  // Format type of image
+  // imageCreateInfo.tiling = tiling;  // How image data should be "tiled"
+  //// (arranged for optimal reading)
+  // imageCreateInfo.initialLayout =
+  // VK_IMAGE_LAYOUT_UNDEFINED; // Layout of image data on creation
+  // imageCreateInfo.usage =
+  // useFlags; // Bit flags defining what image will be used for
+  // imageCreateInfo.samples =
+  // VK_SAMPLE_COUNT_1_BIT; // Number of samples for multi-sampling
+  // imageCreateInfo.sharingMode =
+  // VK_SHARING_MODE_EXCLUSIVE; // Whether image can be shared between queues
 
-  // Create image
-  VkImage image;
-  VkResult result = vkCreateImage(mainDevice.logicalDevice, &imageCreateInfo,
-				  nullptr, &image);
-  if (result != VK_SUCCESS) {
-    throw std::runtime_error("Failed to create an Image!");
-  }
+  //// Create image
+  // VkImage image;
+  // VkResult result = vkCreateImage(mainDevice.logicalDevice, &imageCreateInfo,
+  // nullptr, &image);
+  // if (result != VK_SUCCESS) {
+  // throw std::runtime_error("Failed to create an Image!");
+  //}
 
+  auto extent = VkExtent3D{.width = width, .height = height, .depth = 1};
+  auto imageCreateInfo =
+      vkx::helper::MakeImageCreateInfo(extent, format, tiling, useFlags);
+
+  auto image =
+      vkx::CreateImage(mainDevice.logicalDevice, &imageCreateInfo, nullptr);
   // CREATE MEMORY FOR IMAGE
 
   // Get memory requirements for a type of image
@@ -1138,8 +1142,8 @@ VkImage VulkanRenderer::createImage(uint32_t width, uint32_t height,
   memoryAllocInfo.memoryTypeIndex = findMemoryTypeIndex(
       mainDevice.physicalDevice, memoryRequirements.memoryTypeBits, propFlags);
 
-  result = vkAllocateMemory(mainDevice.logicalDevice, &memoryAllocInfo, nullptr,
-			    imageMemory);
+  auto result = vkAllocateMemory(mainDevice.logicalDevice, &memoryAllocInfo,
+				 nullptr, imageMemory);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to allocate memory for image!");
   }
@@ -1235,7 +1239,7 @@ int VulkanRenderer::createTextureImage(std::string fileName) {
   stbi_image_free(imageData);
 
   // Create image to hold final texture
-  VkImage texImage;
+  vkx::Image texImage;
   VkDeviceMemory texImageMemory;
   texImage = createImage(
       width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,

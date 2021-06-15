@@ -73,11 +73,11 @@ private:
   std::vector<VkFramebuffer> swapChainFramebuffers;
   std::vector<VkCommandBuffer> commandBuffers;
 
-  std::vector<VkImage> colourBufferImage;
+  std::vector<vkx::Image> colourBufferImage;
   std::vector<VkDeviceMemory> colourBufferImageMemory;
   std::vector<VkImageView> colourBufferImageView;
 
-  std::vector<VkImage> depthBufferImage;
+  std::vector<vkx::Image> depthBufferImage;
   std::vector<VkDeviceMemory> depthBufferImageMemory;
   std::vector<VkImageView> depthBufferImageView;
 
@@ -109,7 +109,7 @@ private:
 
   // - Assets
 
-  std::vector<VkImage> textureImages;
+  std::vector<vkx::Image> textureImages;
   std::vector<VkDeviceMemory> textureImageMemory;
   std::vector<VkImageView> textureImageViews;
 
@@ -182,10 +182,10 @@ private:
 				 VkFormatFeatureFlags featureFlags);
 
   // -- Create Functions
-  VkImage createImage(uint32_t width, uint32_t height, VkFormat format,
-		      VkImageTiling tiling, VkImageUsageFlags useFlags,
-		      VkMemoryPropertyFlags propFlags,
-		      VkDeviceMemory *imageMemory);
+  vkx::Image createImage(uint32_t width, uint32_t height, VkFormat format,
+			 VkImageTiling tiling, VkImageUsageFlags useFlags,
+			 VkMemoryPropertyFlags propFlags,
+			 VkDeviceMemory *imageMemory);
   VkImageView createImageView(VkImage image, VkFormat format,
 			      VkImageAspectFlags aspectFlags);
   VkShaderModule createShaderModule(const std::vector<char> &code);

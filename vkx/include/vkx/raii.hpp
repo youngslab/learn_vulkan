@@ -209,4 +209,18 @@ inline auto CreatePipeline(Device const &device, VkPipelineCache pipelineCache,
   return Pipeline::Create(device, pipelineCache, pCreateInfo, pAllocator);
 }
 
+class Image : public Resource<VkImage> {
+private:
+  using Resource::Resource;
+
+public:
+  static auto Create(Device const &device, const VkImageCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator) -> Image;
+};
+
+inline auto CreateImage(Device const &device,
+			const VkImageCreateInfo *pCreateInfo,
+			const VkAllocationCallbacks *pAllocator) -> Image {
+  return Image::Create(device, pCreateInfo, pAllocator);
+}
 } // namespace vkx

@@ -28,6 +28,10 @@ auto MakePipelineColorBlendStateCreateInfo(
 auto MakePipelineDepthStencilStateCreateInfo()
     -> VkPipelineDepthStencilStateCreateInfo;
 
+auto MakeImageCreateInfo(VkExtent3D extent, VkFormat format,
+			 VkImageTiling tiling, VkImageUsageFlags useFlags)
+    -> VkImageCreateInfo;
+
 } // namespace helper
 
 // Template functions to provide default implementation

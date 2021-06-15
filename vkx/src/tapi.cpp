@@ -88,6 +88,26 @@ auto MakePipelineColorBlendStateCreateInfo(
   return createInfo;
 }
 
+auto MakeImageCreateInfo(VkExtent3D extent, VkFormat format,
+			 VkImageTiling tiling, VkImageUsageFlags useFlags)
+    -> VkImageCreateInfo {
+
+  VkImageCreateInfo crateInfo = {};
+  crateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  crateInfo.imageType = VK_IMAGE_TYPE_2D;
+  crateInfo.extent = extent;
+  crateInfo.mipLevels = 1;
+  crateInfo.arrayLayers = 1;
+  crateInfo.format = format;
+  crateInfo.tiling = tiling;
+  crateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  crateInfo.usage = useFlags;
+  crateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+  crateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  return crateInfo;
+}
+
 } // namespace helper
 
 auto CreateInstance(std::string const &appName,
