@@ -24,13 +24,13 @@ find_package(Vulkan REQUIRED)
 find_package(IrrXML REQUIRED)
 find_package(Assimp REQUIRED)
 
-# add_subdirectory(3rd_party)
+add_subdirectory(vkx)
 
 add_executable(learn_vulkan src/main.cpp src/VulkanRenderer.cpp src/Mesh.cpp
 	src/MeshModel.cpp)
 
 target_link_libraries(learn_vulkan Vulkan::Vulkan glm::glm glfw::glfw fmt::fmt
-	Assimp::Assimp)
+	Assimp::Assimp vkx)
 
 target_include_directories(learn_vulkan 
   PUBLIC
