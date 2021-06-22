@@ -23,7 +23,7 @@
 #include "VulkanValidation.h"
 #include "Utilities.h"
 
-#include "vkx/Object.hpp"
+#include "vkx/vkx.hpp"
 
 class VulkanRenderer {
 public:
@@ -55,7 +55,7 @@ private:
 
   // Vulkan Components
   // - Main
-	vkx::Instance instance;
+  vkx::Instance instance;
   VkDebugReportCallbackEXT callback;
   struct {
     VkPhysicalDevice physicalDevice;

@@ -9,14 +9,7 @@ namespace vkx {
 
 template <typename T> struct VulkanTypeInfo;
 
-template <> struct VulkanTypeInfo<VkInstance> {
-  using CreateInfo = VkInstanceCreateInfo;
-  static constexpr auto Create = vkCreateInstance;
-  static constexpr auto Destroy = vkDestroyInstance;
-  static constexpr auto Name = "VkInstance";
-};
-
-#define DEFINE_VULKAN_DEVICE_TYPE_INFO(RESOURCE)                               \
+#define DEFINE_VULKAN_TYPE_INFO(RESOURCE)                               \
   template <> struct VulkanTypeInfo<Vk##RESOURCE> {                            \
     using CreateInfo = Vk##RESOURCE##CreateInfo;                               \
     static constexpr auto Create = vkCreate##RESOURCE;                         \
@@ -24,7 +17,7 @@ template <> struct VulkanTypeInfo<VkInstance> {
     static constexpr auto Name = "Vk" #RESOURCE;                               \
   };
 
-#define DEFINE_VULKAN_DEVICE_TYPE_INFO_KHR(RESOURCE)                           \
+#define DEFINE_VULKAN_TYPE_INFO_KHR(RESOURCE)                           \
   template <> struct VulkanTypeInfo<Vk##RESOURCE##KHR> {                       \
     using CreateInfo = Vk##RESOURCE##CreateInfoKHR;                            \
     static constexpr auto Create = vkCreate##RESOURCE##KHR;                    \
@@ -32,10 +25,10 @@ template <> struct VulkanTypeInfo<VkInstance> {
     static constexpr auto Name = "Vk" #RESOURCE;                               \
   };
 
-// DEFINE_VULKAN_DEVICE_TYPE_INFO(Instance);
-DEFINE_VULKAN_DEVICE_TYPE_INFO(Device);
-DEFINE_VULKAN_DEVICE_TYPE_INFO(Image);
-DEFINE_VULKAN_DEVICE_TYPE_INFO_KHR(Swapchain);
+DEFINE_VULKAN_TYPE_INFO(Instance);
+DEFINE_VULKAN_TYPE_INFO(Device);
+DEFINE_VULKAN_TYPE_INFO(Image);
+DEFINE_VULKAN_TYPE_INFO_KHR(Swapchain);
 
 // GLFW
 // Adaptor which provides the same way to create vulkan instance
