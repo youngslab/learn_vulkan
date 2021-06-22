@@ -175,7 +175,7 @@ void VulkanRenderer::cleanup()
 	{
 		DestroyDebugReportCallbackEXT(instance, callback, nullptr);
 	}
-	vkDestroyInstance(instance, nullptr);
+	//vkDestroyInstance(instance, nullptr);
 }
 
 
@@ -249,7 +249,7 @@ void VulkanRenderer::createInstance()
 	
 
 	// Create instance
-	VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
+	VkResult result = vkx::CreateInstance(&createInfo, nullptr, &instance);
 
 	if (result != VK_SUCCESS)
 	{

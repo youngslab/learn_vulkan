@@ -9,6 +9,13 @@ namespace vkx {
 
 template <typename T> struct VulkanTypeInfo;
 
+template <> struct VulkanTypeInfo<VkInstance> {
+  using CreateInfo = VkInstanceCreateInfo;
+  static constexpr auto Create = vkCreateInstance;
+  static constexpr auto Destroy = vkDestroyInstance;
+  static constexpr auto Name = "VkInstance";
+};
+
 #define DEFINE_VULKAN_DEVICE_TYPE_INFO(RESOURCE)                               \
   template <> struct VulkanTypeInfo<Vk##RESOURCE> {                            \
     using CreateInfo = Vk##RESOURCE##CreateInfo;                               \
@@ -25,14 +32,14 @@ template <typename T> struct VulkanTypeInfo;
     static constexpr auto Name = "Vk" #RESOURCE;                               \
   };
 
-DEFINE_VULKAN_DEVICE_TYPE_INFO(Instance);
+// DEFINE_VULKAN_DEVICE_TYPE_INFO(Instance);
 DEFINE_VULKAN_DEVICE_TYPE_INFO(Device);
 DEFINE_VULKAN_DEVICE_TYPE_INFO(Image);
 DEFINE_VULKAN_DEVICE_TYPE_INFO_KHR(Swapchain);
 
 // GLFW
 // Adaptor which provides the same way to create vulkan instance
-auto CreateGLFWwindow(uint32_t w, uint32_t h, std::string title,
+static auto CreateGLFWwindow(uint32_t w, uint32_t h, std::string title,
 		      GLFWwindow **window) -> VkResult {
   glfwInit();
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -43,7 +50,7 @@ auto CreateGLFWwindow(uint32_t w, uint32_t h, std::string title,
   return VK_SUCCESS;
 }
 
-auto DeleteGLFWwindow(GLFWwindow *w) -> void {
+static auto DeleteGLFWwindow(GLFWwindow *w) -> void {
   glfwDestroyWindow(w);
   glfwTerminate();
 }
