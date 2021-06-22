@@ -30,5 +30,6 @@ auto CreateObject(Args... args) -> VkResult {
 }
 
 using Instance = Object<VkInstance>;
+using Window = Object<GLFWwindow*>;
 
 } // namespace vkx

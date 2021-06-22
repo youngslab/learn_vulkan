@@ -6,7 +6,7 @@ VulkanRenderer::VulkanRenderer()
 {
 }
 
-int VulkanRenderer::init(GLFWwindow * newWindow)
+int VulkanRenderer::init(vkx::Window newWindow)
 {
 	window = newWindow;
 

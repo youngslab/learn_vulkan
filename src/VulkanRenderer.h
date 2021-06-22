@@ -29,7 +29,7 @@ class VulkanRenderer {
 public:
   VulkanRenderer();
 
-  int init(GLFWwindow *newWindow);
+  int init(vkx::Window newWindow);
 
   int createMeshModel(std::string modelFile);
   void updateModel(int modelId, glm::mat4 newModel);
@@ -40,7 +40,7 @@ public:
   ~VulkanRenderer();
 
 private:
-  GLFWwindow *window;
+	vkx::Window window;
 
   int currentFrame = 0;
 

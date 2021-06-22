@@ -19,4 +19,8 @@ auto CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
   return handle;
 }
 
+auto CreateWindow(int width, int height, const char *title)->Window {
+	return CreateObject(width, height, title);
+}
+
 } // namespace vkx
