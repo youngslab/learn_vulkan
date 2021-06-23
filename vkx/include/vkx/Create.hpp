@@ -10,6 +10,7 @@ auto CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
 		    const VkAllocationCallbacks *pAllocator, Instance *pObject)
     -> VkResult;
 
-auto CreateWindow(int width, int height, const char *title) -> Window;
+auto CreateWindow(int width, int height, const char *title, Window *pWindow)
+    -> VkResult;
 
 } // namespace vkx

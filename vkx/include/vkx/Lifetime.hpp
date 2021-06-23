@@ -13,6 +13,7 @@ private:
 
 public:
   AutoDeletable() : _storage(nullptr) {}
+	AutoDeletable(AutoDeletable const &rhs) : _storage(rhs._storage) {}
   AutoDeletable(T handle, std::function<void(T)> deleter)
       : _storage(std::shared_ptr<T>(new T(handle), [deleter](T *ptr) {
 	  deleter(*ptr);

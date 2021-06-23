@@ -22,7 +22,7 @@ void initWindow(std::string wName = "Test Window", const int width = 800,
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-  window = vkx::CreateWindow(width, height, wName);
+  vkx::CreateWindow(width, height, wName.c_str(), &window);
 }
 
 int main() {

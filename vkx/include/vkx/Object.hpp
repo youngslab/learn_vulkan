@@ -12,8 +12,10 @@ namespace vkx {
 template <typename Resource> class Object : public AutoDeletable<Resource> {
 public:
   Object() {}
+  Object(Object const &rhs) : AutoDeletable<Resource>(rhs) {}
+
   template <typename... Args>
-  Object(Args &&...args)
+  Object(Args... args)
       : AutoDeletable<Resource>(CreateAutoDeletable(args...)) {}
 };
 
@@ -30,6 +32,6 @@ auto CreateObject(Args... args) -> VkResult {
 }
 
 using Instance = Object<VkInstance>;
-using Window = Object<GLFWwindow*>;
+using Window = Object<GLFWwindow *>;
 
 } // namespace vkx
