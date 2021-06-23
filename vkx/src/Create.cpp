@@ -24,4 +24,11 @@ auto CreateWindow(int width, int height, const char *title, Window *pWindow)
   return CreateObject(width, height, title, pWindow);
 }
 
+auto CreateDebugReportCallbackEXT(
+    Instance instance, const VkDebugReportCallbackCreateInfoEXT *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator, DebugReportCallbackEXT *pCallback)
+    -> VkResult {
+  return CreateObject(instance, pCreateInfo, pAllocator, pCallback);
+}
+
 } // namespace vkx

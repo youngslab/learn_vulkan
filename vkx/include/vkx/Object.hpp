@@ -19,6 +19,7 @@ public:
       : AutoDeletable<Resource>(CreateAutoDeletable(args...)) {}
 };
 
+// Abstract the way to create vulkan objects.
 template <typename... Args> //
 auto CreateObject(Args... args) -> VkResult {
   using ObjectType = std::remove_pointer_t<last_t<Args...>>;
@@ -33,5 +34,6 @@ auto CreateObject(Args... args) -> VkResult {
 
 using Instance = Object<VkInstance>;
 using Window = Object<GLFWwindow *>;
+using DebugReportCallbackEXT = Object<VkDebugReportCallbackEXT>;
 
 } // namespace vkx

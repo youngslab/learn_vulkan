@@ -13,7 +13,7 @@ private:
 
 public:
   AutoDeletable() : _storage(nullptr) {}
-	AutoDeletable(AutoDeletable const &rhs) : _storage(rhs._storage) {}
+  AutoDeletable(AutoDeletable const &rhs) : _storage(rhs._storage) {}
   AutoDeletable(T handle, std::function<void(T)> deleter)
       : _storage(std::shared_ptr<T>(new T(handle), [deleter](T *ptr) {
 	  deleter(*ptr);
@@ -34,17 +34,39 @@ auto MakeAutoDeletable(T handle, std::function<void(T)> deleter)
   return AutoDeletable(handle, deleter);
 }
 
-template <typename Resource>
-auto CreateAutoDeletable(
-    VkDevice device,
-    const typename VulkanTypeInfo<Resource>::CreateInfo *pCreateInfo,
-    const VkAllocationCallbacks *pAllocator) -> AutoDeletable<Resource> {
-  auto handle = CreateResource<Resource>(device, pCreateInfo, pAllocator);
-  auto deleter = [&device, pAllocator](Resource handle) {
-    DeleteResource<Resource>(device, handle, pAllocator);
+template <typename T> struct get_resource;
+
+template <> struct get_resource<VkDebugReportCallbackCreateInfoEXT> {
+  using type = VkDebugReportCallbackEXT;
+};
+
+template <typename T> using get_resource_t = typename get_resource<T>::type;
+
+template <typename Dependency, typename CreateInfo>
+auto CreateAutoDeletable(Dependency dep, const CreateInfo *pCreateInfo,
+			 const VkAllocationCallbacks *pAllocator)
+    -> AutoDeletable<get_resource_t<CreateInfo>> {
+  using Resource = get_resource_t<CreateInfo>;
+  Resource handle = CreateResource<Resource>(dep, pCreateInfo, pAllocator);
+  // TODO: why i can not use "auto"
+  std::function<void(Resource)> deleter =
+      [&dep, pAllocator](Resource handle) -> void {
+    DeleteResource<Resource>(dep, handle, pAllocator);
   };
   return MakeAutoDeletable(handle, deleter);
 }
+
+// template <typename Resource, typename Dependency>
+// auto CreateAutoDeletable(
+// Dependency dep,
+// const typename VulkanTypeInfo<Resource>::CreateInfo *pCreateInfo,
+// const VkAllocationCallbacks *pAllocator) -> AutoDeletable<Resource> {
+// auto handle = CreateResource<Resource>(dep, pCreateInfo, pAllocator);
+// auto deleter = [&dep, pAllocator](Resource handle) {
+// DeleteResource<Resource>(dep, handle, pAllocator);
+//};
+// return MakeAutoDeletable(handle, deleter);
+//}
 
 template <typename T> auto CreateAutoDeletable() -> AutoDeletable<T> {
   return MakeAutoDeletable(VK_NULL_HANDLE, [](auto) {});

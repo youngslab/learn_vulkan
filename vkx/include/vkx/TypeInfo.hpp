@@ -4,12 +4,13 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.hpp>
 #include <vulkan/vulkan_core.h>
+#include <vkx/Ext.hpp>
 
 namespace vkx {
 
 template <typename T> struct VulkanTypeInfo;
 
-#define DEFINE_VULKAN_TYPE_INFO(RESOURCE)                               \
+#define DEFINE_VULKAN_TYPE_INFO(RESOURCE)                                      \
   template <> struct VulkanTypeInfo<Vk##RESOURCE> {                            \
     using CreateInfo = Vk##RESOURCE##CreateInfo;                               \
     static constexpr auto Create = vkCreate##RESOURCE;                         \
@@ -17,7 +18,7 @@ template <typename T> struct VulkanTypeInfo;
     static constexpr auto Name = "Vk" #RESOURCE;                               \
   };
 
-#define DEFINE_VULKAN_TYPE_INFO_KHR(RESOURCE)                           \
+#define DEFINE_VULKAN_TYPE_INFO_KHR(RESOURCE)                                  \
   template <> struct VulkanTypeInfo<Vk##RESOURCE##KHR> {                       \
     using CreateInfo = Vk##RESOURCE##CreateInfoKHR;                            \
     static constexpr auto Create = vkCreate##RESOURCE##KHR;                    \
@@ -25,15 +26,24 @@ template <typename T> struct VulkanTypeInfo;
     static constexpr auto Name = "Vk" #RESOURCE;                               \
   };
 
+#define DEFINE_VULKAN_TYPE_INFO_EXT(RESOURCE)                                  \
+  template <> struct VulkanTypeInfo<Vk##RESOURCE##EXT> {                       \
+    using CreateInfo = Vk##RESOURCE##CreateInfoEXT;                            \
+    static constexpr auto Create = MakeCreateFunctionExt();                    \
+    static constexpr auto Destroy = MakeDestroyFunctionExt();                  \
+    static constexpr auto Name = "Vk" #RESOURCE;                               \
+  };
+
 DEFINE_VULKAN_TYPE_INFO(Instance);
 DEFINE_VULKAN_TYPE_INFO(Device);
 DEFINE_VULKAN_TYPE_INFO(Image);
 DEFINE_VULKAN_TYPE_INFO_KHR(Swapchain);
+DEFINE_VULKAN_TYPE_INFO_EXT(DebugReportCallback);
 
 // GLFW
 // Adaptor which provides the same way to create vulkan instance
 static auto CreateGLFWwindow(uint32_t w, uint32_t h, std::string title,
-		      GLFWwindow **window) -> VkResult {
+			     GLFWwindow **window) -> VkResult {
   glfwInit();
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);

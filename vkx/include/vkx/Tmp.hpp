@@ -21,6 +21,10 @@ template <typename... Args> auto get_last(Args... args) -> last_t<Args...> {
   return std::get<sizeof...(Args) - 1>(std::tuple{args...});
 }
 
+template <typename... Args> auto get_first(Args... args) {
+  return std::get<0>(std::tuple{args...});
+}
+
 // drop_last
 template <template <typename...> class Tuple, typename... Args>
 auto drop_last(Tuple<Args...> const &tuple) {
