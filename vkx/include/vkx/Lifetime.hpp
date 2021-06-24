@@ -27,7 +27,7 @@ public:
   operator T() const & { return *_storage; }
   operator T() const && = delete;
 
-  // T *operator&() { return _storage.get(); }
+  T *data() { return _storage.get(); }
 };
 
 template <typename T>
