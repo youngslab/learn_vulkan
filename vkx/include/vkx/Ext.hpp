@@ -5,30 +5,11 @@
 
 namespace vkx {
 
-template <typename Func> auto MakeExtensionFunction() -> Func {
+template <typename Func, char const *Name>
+constexpr auto LoadExtFunction() -> Func {
   return [](auto... args) {
     auto dep = get_first(args...);
-    auto func =
-	(Func)vkGetInstanceProcAddr(dep, "vkCreateDebugReportCallbackEXT");
-    return func(args...);
-  };
-}
-
-constexpr auto MakeCreateFunctionExt() -> PFN_vkCreateDebugReportCallbackEXT {
-  return [](auto... args) {
-    auto dep = get_first(args...);
-    auto func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(
-	dep, "vkCreateDebugReportCallbackEXT");
-
-    return func(args...);
-  };
-}
-
-constexpr auto MakeDestroyFunctionExt() -> PFN_vkDestroyDebugReportCallbackEXT {
-  return [](auto... args) {
-    auto dep = get_first(args...);
-    auto func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(
-	dep, "vkDestroyDebugReportCallbackEXT");
+    auto func = (Func)vkGetInstanceProcAddr(dep, Name);
     return func(args...);
   };
 }

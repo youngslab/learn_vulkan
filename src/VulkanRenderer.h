@@ -40,7 +40,7 @@ public:
   ~VulkanRenderer();
 
 private:
-	vkx::Window window;
+  vkx::Window window;
 
   int currentFrame = 0;
 
@@ -56,14 +56,14 @@ private:
   // Vulkan Components
   // - Main
   vkx::Instance instance;
-  VkDebugReportCallbackEXT callback;
+  vkx::DebugReportCallbackEXT callback;
   struct {
     VkPhysicalDevice physicalDevice;
     VkDevice logicalDevice;
   } mainDevice;
   VkQueue graphicsQueue;
   VkQueue presentationQueue;
-  VkSurfaceKHR surface;
+  vkx::SurfaceKHR surface;
   VkSwapchainKHR swapchain;
 
   std::vector<SwapchainImage> swapChainImages;

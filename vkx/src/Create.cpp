@@ -31,4 +31,10 @@ auto CreateDebugReportCallbackEXT(
   return CreateObject(instance, pCreateInfo, pAllocator, pCallback);
 }
 
+auto CreateSurfaceKHR(Instance instance, Window window,
+		      const VkAllocationCallbacks *allocator,
+		      SurfaceKHR *surface) -> VkResult {
+  return CreateObject(instance, window, allocator, surface);
+}
+
 } // namespace vkx

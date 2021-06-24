@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <functional>
+
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <vkx/TypeInfo.hpp>
 #include <vkx/Resource.hpp>
@@ -34,49 +36,23 @@ auto MakeAutoDeletable(T handle, std::function<void(T)> deleter)
   return AutoDeletable(handle, deleter);
 }
 
-template <typename T> struct get_resource;
+template <typename Resource, typename... Args>
+auto CreateHandle(Args... args) -> Resource {
+  Resource handle;
+  auto result = VulkanTypeInfo<Resource>::Create(args..., &handle);
+  if (result != VK_SUCCESS) {
+    // TODO: formatting string with result.
+    throw std::runtime_error(std::string("Failed to create a handle - ") +
+			     VulkanTypeInfo<Resource>::Name);
+  }
+  return handle;
+}
 
-template <> struct get_resource<VkDebugReportCallbackCreateInfoEXT> {
-  using type = VkDebugReportCallbackEXT;
-};
-
-template <typename T> using get_resource_t = typename get_resource<T>::type;
-
-template <typename Dependency, typename CreateInfo>
-auto CreateAutoDeletable(Dependency dep, const CreateInfo *pCreateInfo,
-			 const VkAllocationCallbacks *pAllocator)
-    -> AutoDeletable<get_resource_t<CreateInfo>> {
-  using Resource = get_resource_t<CreateInfo>;
-  Resource handle = CreateResource<Resource>(dep, pCreateInfo, pAllocator);
-  // TODO: why i can not use "auto"
-  std::function<void(Resource)> deleter =
-      [&dep, pAllocator](Resource handle) -> void {
-    DeleteResource<Resource>(dep, handle, pAllocator);
+template <typename Resource, typename... Args>
+auto CreateDeleter(Args... args) -> std::function<void(Resource)> {
+  return [=](Resource handle) {
+    VulkanTypeInfo<Resource>::Destroy2(handle, args...);
   };
-  return MakeAutoDeletable(handle, deleter);
 }
-
-// template <typename Resource, typename Dependency>
-// auto CreateAutoDeletable(
-// Dependency dep,
-// const typename VulkanTypeInfo<Resource>::CreateInfo *pCreateInfo,
-// const VkAllocationCallbacks *pAllocator) -> AutoDeletable<Resource> {
-// auto handle = CreateResource<Resource>(dep, pCreateInfo, pAllocator);
-// auto deleter = [&dep, pAllocator](Resource handle) {
-// DeleteResource<Resource>(dep, handle, pAllocator);
-//};
-// return MakeAutoDeletable(handle, deleter);
-//}
-
-template <typename T> auto CreateAutoDeletable() -> AutoDeletable<T> {
-  return MakeAutoDeletable(VK_NULL_HANDLE, [](auto) {});
-}
-
-auto CreateAutoDeletable(uint32_t w, uint32_t h, std::string title)
-    -> AutoDeletable<GLFWwindow *>;
-
-auto CreateAutoDeletable(const VkInstanceCreateInfo *pCreateInfo,
-			 const VkAllocationCallbacks *pAllocator)
-    -> AutoDeletable<VkInstance>;
 
 } // namespace vkx
