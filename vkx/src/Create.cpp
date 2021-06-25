@@ -57,4 +57,10 @@ auto CreateSwapchainKHR(Device device,
   return CreateObject<SwapchainKHR>(device, pCreateInfo, pAllocator,
 				    pSwapchain);
 }
+
+auto CreateRenderPass(Device device, const VkRenderPassCreateInfo *pCreateInfo,
+		      const VkAllocationCallbacks *pAllocator,
+		      RenderPass *pRenderPass) -> VkResult {
+  return CreateObject<RenderPass>(device, pCreateInfo, pAllocator, pRenderPass);
+}
 } // namespace vkx

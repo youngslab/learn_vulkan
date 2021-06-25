@@ -167,7 +167,6 @@ void VulkanRenderer::cleanup() {
   }
   vkDestroyPipeline(mainDevice.logicalDevice, graphicsPipeline, nullptr);
   vkDestroyPipelineLayout(mainDevice.logicalDevice, pipelineLayout, nullptr);
-  vkDestroyRenderPass(mainDevice.logicalDevice, renderPass, nullptr);
   for (auto image : swapChainImages) {
     vkDestroyImageView(mainDevice.logicalDevice, image.imageView, nullptr);
   }
@@ -560,7 +559,7 @@ void VulkanRenderer::createRenderPass() {
       static_cast<uint32_t>(subpassDependencies.size());
   renderPassCreateInfo.pDependencies = subpassDependencies.data();
 
-  VkResult result = vkCreateRenderPass(
+  VkResult result = vkx::CreateRenderPass(
       mainDevice.logicalDevice, &renderPassCreateInfo, nullptr, &renderPass);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Render Pass!");

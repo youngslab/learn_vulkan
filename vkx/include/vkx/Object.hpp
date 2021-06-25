@@ -62,5 +62,6 @@ using DebugReportCallbackEXT = Object<VkDebugReportCallbackEXT>;
 using SurfaceKHR = Object<VkSurfaceKHR>;
 using Device = Object<VkDevice>;
 using SwapchainKHR = Object<VkSwapchainKHR>;
+using RenderPass = Object<VkRenderPass>;
 
 } // namespace vkx
