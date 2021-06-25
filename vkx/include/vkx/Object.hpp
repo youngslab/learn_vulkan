@@ -63,5 +63,6 @@ using SurfaceKHR = Object<VkSurfaceKHR>;
 using Device = Object<VkDevice>;
 using SwapchainKHR = Object<VkSwapchainKHR>;
 using RenderPass = Object<VkRenderPass>;
+using DescriptorSetLayout = Object<VkDescriptorSetLayout>;
 
 } // namespace vkx

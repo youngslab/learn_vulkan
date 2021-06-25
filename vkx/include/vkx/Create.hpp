@@ -37,4 +37,9 @@ auto CreateRenderPass(Device device, const VkRenderPassCreateInfo *pCreateInfo,
 		      const VkAllocationCallbacks *pAllocator,
 		      RenderPass *pRenderPass) -> VkResult;
 
+auto CreateDescriptorSetLayout(
+    Device device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator, DescriptorSetLayout *pSetLayout)
+    -> VkResult;
+
 } // namespace vkx

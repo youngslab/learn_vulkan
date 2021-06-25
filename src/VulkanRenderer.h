@@ -77,8 +77,8 @@ private:
   VkSampler textureSampler;
 
   // - Descriptors
-  VkDescriptorSetLayout descriptorSetLayout;
-  VkDescriptorSetLayout samplerSetLayout;
+  vkx::DescriptorSetLayout descriptorSetLayout;
+  vkx::DescriptorSetLayout samplerSetLayout;
   VkPushConstantRange pushConstantRange;
 
   VkDescriptorPool descriptorPool;

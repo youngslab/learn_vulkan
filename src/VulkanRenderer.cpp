@@ -131,8 +131,6 @@ void VulkanRenderer::cleanup() {
 
   vkDestroyDescriptorPool(mainDevice.logicalDevice, samplerDescriptorPool,
 			  nullptr);
-  vkDestroyDescriptorSetLayout(mainDevice.logicalDevice, samplerSetLayout,
-			       nullptr);
 
   vkDestroySampler(mainDevice.logicalDevice, textureSampler, nullptr);
 
@@ -147,8 +145,6 @@ void VulkanRenderer::cleanup() {
   vkFreeMemory(mainDevice.logicalDevice, depthBufferImageMemory, nullptr);
 
   vkDestroyDescriptorPool(mainDevice.logicalDevice, descriptorPool, nullptr);
-  vkDestroyDescriptorSetLayout(mainDevice.logicalDevice, descriptorSetLayout,
-			       nullptr);
   for (size_t i = 0; i < swapChainImages.size(); i++) {
     vkDestroyBuffer(mainDevice.logicalDevice, vpUniformBuffer[i], nullptr);
     vkFreeMemory(mainDevice.logicalDevice, vpUniformBufferMemory[i], nullptr);
@@ -600,9 +596,9 @@ void VulkanRenderer::createDescriptorSetLayout() {
   layoutCreateInfo.pBindings = layoutBindings.data(); // Array of binding infos
 
   // Create Descriptor Set Layout
-  VkResult result =
-      vkCreateDescriptorSetLayout(mainDevice.logicalDevice, &layoutCreateInfo,
-				  nullptr, &descriptorSetLayout);
+  VkResult result = vkx::CreateDescriptorSetLayout(mainDevice.logicalDevice,
+						   &layoutCreateInfo, nullptr,
+						   &descriptorSetLayout);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Descriptor Set Layout!");
   }
@@ -625,9 +621,9 @@ void VulkanRenderer::createDescriptorSetLayout() {
   textureLayoutCreateInfo.pBindings = &samplerLayoutBinding;
 
   // Create Descriptor Set Layout
-  result = vkCreateDescriptorSetLayout(mainDevice.logicalDevice,
-				       &textureLayoutCreateInfo, nullptr,
-				       &samplerSetLayout);
+  result = vkx::CreateDescriptorSetLayout(mainDevice.logicalDevice,
+					  &textureLayoutCreateInfo, nullptr,
+					  &samplerSetLayout);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Descriptor Set Layout!");
   }
@@ -1910,7 +1906,7 @@ int VulkanRenderer::createTextureDescriptor(VkImageView textureImage) {
   setAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
   setAllocInfo.descriptorPool = samplerDescriptorPool;
   setAllocInfo.descriptorSetCount = 1;
-  setAllocInfo.pSetLayouts = &samplerSetLayout;
+  setAllocInfo.pSetLayouts = samplerSetLayout.data();
 
   // Allocate Descriptor Sets
   VkResult result = vkAllocateDescriptorSets(mainDevice.logicalDevice,

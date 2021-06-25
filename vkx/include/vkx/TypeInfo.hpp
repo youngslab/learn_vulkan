@@ -81,6 +81,7 @@ DEFINE_VULKAN_TYPE_INFO(Device);
 DEFINE_VULKAN_TYPE_INFO(Image);
 DEFINE_VULKAN_TYPE_INFO_KHR(Swapchain);
 DEFINE_VULKAN_TYPE_INFO(RenderPass);
+DEFINE_VULKAN_TYPE_INFO(DescriptorSetLayout);
 
 // GLFW
 // Adaptor which provides the same way to create vulkan instance

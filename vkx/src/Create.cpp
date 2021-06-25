@@ -1,5 +1,6 @@
 
 #include "vkx/Object.hpp"
+#include <vulkan/vulkan_core.h>
 
 namespace vkx {
 
@@ -63,4 +64,13 @@ auto CreateRenderPass(Device device, const VkRenderPassCreateInfo *pCreateInfo,
 		      RenderPass *pRenderPass) -> VkResult {
   return CreateObject<RenderPass>(device, pCreateInfo, pAllocator, pRenderPass);
 }
+
+auto CreateDescriptorSetLayout(
+    Device device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator, DescriptorSetLayout *pSetLayout)
+    -> VkResult {
+  return CreateObject<DescriptorSetLayout>(device, pCreateInfo, pAllocator,
+					   pSetLayout);
+}
+
 } // namespace vkx
