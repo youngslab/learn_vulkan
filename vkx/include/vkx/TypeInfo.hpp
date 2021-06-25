@@ -16,20 +16,29 @@ template <typename Resource> struct Destroyer {
   template <typename Dependency, typename CreateInfo>
   static auto Destroy2(Resource handle, Dependency dep, CreateInfo,
 		       const VkAllocationCallbacks *pAllocator) {
-		if(handle == VK_NULL_HANDLE)  return;
+    if (handle == VK_NULL_HANDLE)
+      return;
     VulkanTypeInfo<Resource>::Destroy(dep, handle, pAllocator);
   }
 
   template <typename CreateInfo>
   static auto Destroy2(Resource handle, CreateInfo,
 		       const VkAllocationCallbacks *pAllocator) {
-		if(handle == VK_NULL_HANDLE)  return;
+    if (handle == VK_NULL_HANDLE)
+      return;
     VulkanTypeInfo<Resource>::Destroy(handle, pAllocator);
   }
 
   static auto Destroy2(Resource handle, uint32_t, uint32_t, std::string) {
-		if(handle == VK_NULL_HANDLE)  return;
+    if (handle == VK_NULL_HANDLE)
+      return;
     VulkanTypeInfo<Resource>::Destroy(handle);
+  }
+
+  static auto Destroy2(Resource device, VkPhysicalDevice,
+		       const VkDeviceCreateInfo *,
+		       const VkAllocationCallbacks *pAllocator) {
+    VulkanTypeInfo<Resource>::Destroy(device, pAllocator);
   }
 };
 

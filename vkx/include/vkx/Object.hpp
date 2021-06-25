@@ -60,5 +60,7 @@ using Instance = Object<VkInstance>;
 using Window = Object<GLFWwindow *>;
 using DebugReportCallbackEXT = Object<VkDebugReportCallbackEXT>;
 using SurfaceKHR = Object<VkSurfaceKHR>;
+using Device = Object<VkDevice>;
+using SwapchainKHR = Object<VkSwapchainKHR>;
 
 } // namespace vkx

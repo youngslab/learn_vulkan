@@ -22,4 +22,14 @@ auto CreateDebugReportCallbackEXT(
 auto CreateSurfaceKHR(Instance instance, Window window,
 		      const VkAllocationCallbacks *allocator,
 		      SurfaceKHR *surface) -> VkResult;
+
+auto CreateDevice(VkPhysicalDevice physicalDevice,
+		  const VkDeviceCreateInfo *pCreateInfo,
+		  const VkAllocationCallbacks *pAllocator, Device *pDevice)
+    -> VkResult;
+
+auto vkCreateSwapchainKHR(Device device,
+			  const VkSwapchainCreateInfoKHR *pCreateInfo,
+			  const VkAllocationCallbacks *pAllocator,
+			  SwapchainKHR *pSwapchain) -> VkResult;
 } // namespace vkx

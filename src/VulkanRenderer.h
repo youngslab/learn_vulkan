@@ -59,7 +59,7 @@ private:
   vkx::DebugReportCallbackEXT callback;
   struct {
     VkPhysicalDevice physicalDevice;
-    VkDevice logicalDevice;
+    vkx::Device logicalDevice;
   } mainDevice;
   VkQueue graphicsQueue;
   VkQueue presentationQueue;

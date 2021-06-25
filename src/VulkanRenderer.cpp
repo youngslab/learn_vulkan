@@ -171,8 +171,6 @@ void VulkanRenderer::cleanup() {
   for (auto image : swapChainImages) {
     vkDestroyImageView(mainDevice.logicalDevice, image.imageView, nullptr);
   }
-  vkDestroySwapchainKHR(mainDevice.logicalDevice, swapchain, nullptr);
-  vkDestroyDevice(mainDevice.logicalDevice, nullptr);
 }
 
 VulkanRenderer::~VulkanRenderer() {}
@@ -315,8 +313,9 @@ void VulkanRenderer::createLogicalDevice() {
       &deviceFeatures; // Physical Device features Logical Device will use
 
   // Create the logical device for the given physical device
-  VkResult result = vkCreateDevice(mainDevice.physicalDevice, &deviceCreateInfo,
-				   nullptr, &mainDevice.logicalDevice);
+  VkResult result =
+      vkx::CreateDevice(mainDevice.physicalDevice, &deviceCreateInfo, nullptr,
+			&mainDevice.logicalDevice);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Logical Device!");
   }
