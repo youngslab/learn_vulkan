@@ -28,8 +28,8 @@ auto CreateDevice(VkPhysicalDevice physicalDevice,
 		  const VkAllocationCallbacks *pAllocator, Device *pDevice)
     -> VkResult;
 
-auto vkCreateSwapchainKHR(Device device,
-			  const VkSwapchainCreateInfoKHR *pCreateInfo,
-			  const VkAllocationCallbacks *pAllocator,
-			  SwapchainKHR *pSwapchain) -> VkResult;
+auto CreateSwapchainKHR(Device device,
+			const VkSwapchainCreateInfoKHR *pCreateInfo,
+			const VkAllocationCallbacks *pAllocator,
+			SwapchainKHR *pSwapchain) -> VkResult;
 } // namespace vkx

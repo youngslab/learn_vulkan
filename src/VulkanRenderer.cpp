@@ -102,9 +102,9 @@ void VulkanRenderer::draw() {
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   presentInfo.waitSemaphoreCount = 1; // Number of semaphores to wait on
   presentInfo.pWaitSemaphores =
-      &renderFinished[currentFrame];	// Semaphores to wait on
-  presentInfo.swapchainCount = 1;	// Number of swapchains to present to
-  presentInfo.pSwapchains = &swapchain; // Swapchains to present images to
+      &renderFinished[currentFrame]; // Semaphores to wait on
+  presentInfo.swapchainCount = 1;    // Number of swapchains to present to
+  presentInfo.pSwapchains = swapchain.data(); // Swapchains to present images to
   presentInfo.pImageIndices =
       &imageIndex; // Index of images in swapchains to present
 
@@ -415,7 +415,7 @@ void VulkanRenderer::createSwapChain() {
   swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
   // Create Swapchain
-  VkResult result = vkCreateSwapchainKHR(
+  VkResult result = vkx::CreateSwapchainKHR(
       mainDevice.logicalDevice, &swapChainCreateInfo, nullptr, &swapchain);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Swapchain!");

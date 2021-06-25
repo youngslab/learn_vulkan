@@ -50,10 +50,10 @@ auto CreateDevice(VkPhysicalDevice physicalDevice,
   return CreateObject<Device>(physicalDevice, pCreateInfo, pAllocator, pDevice);
 }
 
-auto vkCreateSwapchainKHR(Device device,
-			  const VkSwapchainCreateInfoKHR *pCreateInfo,
-			  const VkAllocationCallbacks *pAllocator,
-			  SwapchainKHR *pSwapchain) -> VkResult {
+auto CreateSwapchainKHR(Device device,
+			const VkSwapchainCreateInfoKHR *pCreateInfo,
+			const VkAllocationCallbacks *pAllocator,
+			SwapchainKHR *pSwapchain) -> VkResult {
   return CreateObject<SwapchainKHR>(device, pCreateInfo, pAllocator,
 				    pSwapchain);
 }

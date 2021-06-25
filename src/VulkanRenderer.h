@@ -64,7 +64,7 @@ private:
   VkQueue graphicsQueue;
   VkQueue presentationQueue;
   vkx::SurfaceKHR surface;
-  VkSwapchainKHR swapchain;
+  vkx::SwapchainKHR swapchain;
 
   std::vector<SwapchainImage> swapChainImages;
   std::vector<VkFramebuffer> swapChainFramebuffers;
