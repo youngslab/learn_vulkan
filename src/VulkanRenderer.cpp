@@ -162,7 +162,6 @@ void VulkanRenderer::cleanup() {
     vkDestroyFramebuffer(mainDevice.logicalDevice, framebuffer, nullptr);
   }
   vkDestroyPipeline(mainDevice.logicalDevice, graphicsPipeline, nullptr);
-  vkDestroyPipelineLayout(mainDevice.logicalDevice, pipelineLayout, nullptr);
   for (auto image : swapChainImages) {
     vkDestroyImageView(mainDevice.logicalDevice, image.imageView, nullptr);
   }
@@ -863,9 +862,9 @@ void VulkanRenderer::createGraphicsPipeline() {
   pipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;
 
   // Create Pipeline Layout
-  VkResult result = vkCreatePipelineLayout(mainDevice.logicalDevice,
-					   &pipelineLayoutCreateInfo, nullptr,
-					   &pipelineLayout);
+  VkResult result = vkx::CreatePipelineLayout(mainDevice.logicalDevice,
+					      &pipelineLayoutCreateInfo,
+					      nullptr, &pipelineLayout);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create Pipeline Layout!");
   }

@@ -73,4 +73,12 @@ auto CreateDescriptorSetLayout(
 					   pSetLayout);
 }
 
+auto CreatePipelineLayout(Device device,
+			  const VkPipelineLayoutCreateInfo *pCreateInfo,
+			  const VkAllocationCallbacks *pAllocator,
+			  PipelineLayout *pPipelineLayout) -> VkResult {
+  return CreateObject<PipelineLayout>(device, pCreateInfo, pAllocator,
+				      pPipelineLayout);
+}
+
 } // namespace vkx

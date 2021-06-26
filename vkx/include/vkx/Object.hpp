@@ -64,5 +64,6 @@ using Device = Object<VkDevice>;
 using SwapchainKHR = Object<VkSwapchainKHR>;
 using RenderPass = Object<VkRenderPass>;
 using DescriptorSetLayout = Object<VkDescriptorSetLayout>;
+using PipelineLayout = Object<VkPipelineLayout>;
 
 } // namespace vkx

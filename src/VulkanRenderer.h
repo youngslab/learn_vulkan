@@ -104,7 +104,7 @@ private:
 
   // - Pipeline
   VkPipeline graphicsPipeline;
-  VkPipelineLayout pipelineLayout;
+  vkx::PipelineLayout pipelineLayout;
   vkx::RenderPass renderPass;
 
   // - Pools
