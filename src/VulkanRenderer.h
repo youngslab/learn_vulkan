@@ -103,7 +103,7 @@ private:
   std::vector<VkImageView> textureImageViews;
 
   // - Pipeline
-  VkPipeline graphicsPipeline;
+  vkx::Pipeline graphicsPipeline;
   vkx::PipelineLayout pipelineLayout;
   vkx::RenderPass renderPass;
 

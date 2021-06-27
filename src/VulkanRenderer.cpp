@@ -161,7 +161,6 @@ void VulkanRenderer::cleanup() {
   for (auto framebuffer : swapChainFramebuffers) {
     vkDestroyFramebuffer(mainDevice.logicalDevice, framebuffer, nullptr);
   }
-  vkDestroyPipeline(mainDevice.logicalDevice, graphicsPipeline, nullptr);
   for (auto image : swapChainImages) {
     vkDestroyImageView(mainDevice.logicalDevice, image.imageView, nullptr);
   }
@@ -914,9 +913,9 @@ void VulkanRenderer::createGraphicsPipeline() {
 	  // multiple at once)
 
   // Create Graphics Pipeline
-  result = vkCreateGraphicsPipelines(mainDevice.logicalDevice, VK_NULL_HANDLE,
-				     1, &pipelineCreateInfo, nullptr,
-				     &graphicsPipeline);
+  result = vkx::CreateGraphicsPipelines(mainDevice.logicalDevice,
+					VK_NULL_HANDLE, 1, &pipelineCreateInfo,
+					nullptr, &graphicsPipeline);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Graphics Pipeline!");
   }

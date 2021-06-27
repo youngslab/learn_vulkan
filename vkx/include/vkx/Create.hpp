@@ -46,4 +46,10 @@ auto CreatePipelineLayout(Device device,
 			  const VkPipelineLayoutCreateInfo *pCreateInfo,
 			  const VkAllocationCallbacks *pAllocator,
 			  PipelineLayout *pPipelineLayout) -> VkResult;
+
+auto CreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
+			     uint32_t createInfoCount,
+			     const VkGraphicsPipelineCreateInfo *pCreateInfos,
+			     const VkAllocationCallbacks *pAllocator,
+			     Pipeline *pPipelines) -> VkResult;
 } // namespace vkx

@@ -114,5 +114,35 @@ template <> struct VulkanTypeInfo<VkSurfaceKHR> : Destroyer<VkSurfaceKHR> {
   static constexpr auto Name = "VkSurfaceKHR";
 };
 
+// special case
+template <> struct VulkanTypeInfo<VkPipeline> {
+  static constexpr auto Name = "VkPipeline";
+
+  static auto Create(VkDevice device, VkPipelineCache pipelineCache,
+		     uint32_t createInfoCount,
+		     const VkGraphicsPipelineCreateInfo *pCreateInfos,
+		     const VkAllocationCallbacks *pAllocator,
+		     VkPipeline *pPipelines) {
+    return vkCreateGraphicsPipelines(device, pipelineCache, createInfoCount,
+				     pCreateInfos, pAllocator, pPipelines);
+  }
+
+  static auto Create(VkDevice device, VkPipelineCache pipelineCache,
+		     uint32_t createInfoCount,
+		     const VkComputePipelineCreateInfo *pCreateInfos,
+		     const VkAllocationCallbacks *pAllocator,
+		     VkPipeline *pPipelines) {
+    return vkCreateComputePipelines(device, pipelineCache, createInfoCount,
+				    pCreateInfos, pAllocator, pPipelines);
+  }
+
+  template <typename CreateInfo>
+  static auto Destroy2(VkPipeline pipeline, VkDevice device, VkPipelineCache,
+		       uint32_t, const CreateInfo *,
+		       const VkAllocationCallbacks *pAllocator) {
+    return vkDestroyPipeline(device, pipeline, pAllocator);
+  }
+};
+
 } // namespace vkx
 
