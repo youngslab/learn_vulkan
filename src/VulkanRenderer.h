@@ -67,7 +67,7 @@ private:
   vkx::SwapchainKHR swapchain;
 
   std::vector<SwapchainImage> swapChainImages;
-  std::vector<VkFramebuffer> swapChainFramebuffers;
+  std::vector<vkx::Framebuffer> swapChainFramebuffers;
   std::vector<VkCommandBuffer> commandBuffers;
 
   vkx::Image depthBufferImage;

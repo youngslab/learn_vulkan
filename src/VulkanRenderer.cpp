@@ -154,9 +154,6 @@ void VulkanRenderer::cleanup() {
     vkDestroyFence(mainDevice.logicalDevice, drawFences[i], nullptr);
   }
   vkDestroyCommandPool(mainDevice.logicalDevice, graphicsCommandPool, nullptr);
-  for (auto framebuffer : swapChainFramebuffers) {
-    vkDestroyFramebuffer(mainDevice.logicalDevice, framebuffer, nullptr);
-  }
 }
 
 VulkanRenderer::~VulkanRenderer() {}
@@ -959,8 +956,8 @@ void VulkanRenderer::createFramebuffers() {
     framebufferCreateInfo.layers = 1;			   // Framebuffer layers
 
     VkResult result =
-	vkCreateFramebuffer(mainDevice.logicalDevice, &framebufferCreateInfo,
-			    nullptr, &swapChainFramebuffers[i]);
+	vkx::CreateFramebuffer(mainDevice.logicalDevice, &framebufferCreateInfo,
+			       nullptr, &swapChainFramebuffers[i]);
     if (result != VK_SUCCESS) {
       throw std::runtime_error("Failed to create a Framebuffer!");
     }

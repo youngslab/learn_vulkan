@@ -68,5 +68,6 @@ using PipelineLayout = Object<VkPipelineLayout>;
 using Pipeline = Object<VkPipeline>;
 using Image = Object<VkImage>;
 using ImageView = Object<VkImageView>;
+using Framebuffer = Object<VkFramebuffer>;
 
 } // namespace vkx

@@ -61,4 +61,9 @@ auto CreateImageView(Device device, const VkImageViewCreateInfo *pCreateInfo,
 		     const VkAllocationCallbacks *pAllocator, ImageView *pView)
     -> VkResult;
 
+auto CreateFramebuffer(Device device,
+		       const VkFramebufferCreateInfo *pCreateInfo,
+		       const VkAllocationCallbacks *pAllocator,
+		       Framebuffer *pFramebuffer) -> VkResult;
+
 } // namespace vkx

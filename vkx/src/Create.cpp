@@ -103,4 +103,11 @@ auto CreateImageView(Device device, const VkImageViewCreateInfo *pCreateInfo,
   return CreateObject<ImageView>(device, pCreateInfo, pAllocator, pView);
 }
 
+auto CreateFramebuffer(Device device,
+		       const VkFramebufferCreateInfo *pCreateInfo,
+		       const VkAllocationCallbacks *pAllocator,
+		       Framebuffer *pFramebuffer) -> VkResult {
+  return CreateObject<Framebuffer>(device, pCreateInfo, pAllocator,
+				   pFramebuffer);
+}
 } // namespace vkx
