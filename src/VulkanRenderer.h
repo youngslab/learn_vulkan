@@ -108,7 +108,7 @@ private:
   vkx::RenderPass renderPass;
 
   // - Pools
-  VkCommandPool graphicsCommandPool;
+  vkx::CommandPool graphicsCommandPool;
 
   // - Utility
   VkFormat swapChainImageFormat;

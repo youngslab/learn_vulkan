@@ -153,7 +153,6 @@ void VulkanRenderer::cleanup() {
     vkDestroySemaphore(mainDevice.logicalDevice, imageAvailable[i], nullptr);
     vkDestroyFence(mainDevice.logicalDevice, drawFences[i], nullptr);
   }
-  vkDestroyCommandPool(mainDevice.logicalDevice, graphicsCommandPool, nullptr);
 }
 
 VulkanRenderer::~VulkanRenderer() {}
@@ -977,8 +976,8 @@ void VulkanRenderer::createCommandPool() {
 					 // this command pool will use
 
   // Create a Graphics Queue Family Command Pool
-  VkResult result = vkCreateCommandPool(mainDevice.logicalDevice, &poolInfo,
-					nullptr, &graphicsCommandPool);
+  VkResult result = vkx::CreateCommandPool(mainDevice.logicalDevice, &poolInfo,
+					   nullptr, &graphicsCommandPool);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Command Pool!");
   }

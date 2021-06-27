@@ -69,5 +69,6 @@ using Pipeline = Object<VkPipeline>;
 using Image = Object<VkImage>;
 using ImageView = Object<VkImageView>;
 using Framebuffer = Object<VkFramebuffer>;
+using CommandPool = Object<VkCommandPool>;
 
 } // namespace vkx

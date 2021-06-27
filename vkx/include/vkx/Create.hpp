@@ -66,4 +66,8 @@ auto CreateFramebuffer(Device device,
 		       const VkAllocationCallbacks *pAllocator,
 		       Framebuffer *pFramebuffer) -> VkResult;
 
+auto CreateCommandPool(Device device,
+		       const VkCommandPoolCreateInfo *pCreateInfo,
+		       const VkAllocationCallbacks *pAllocator,
+		       CommandPool *pCommandPool) -> VkResult;
 } // namespace vkx
