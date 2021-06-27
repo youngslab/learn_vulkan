@@ -67,5 +67,6 @@ using DescriptorSetLayout = Object<VkDescriptorSetLayout>;
 using PipelineLayout = Object<VkPipelineLayout>;
 using Pipeline = Object<VkPipeline>;
 using Image = Object<VkImage>;
+using ImageView = Object<VkImageView>;
 
 } // namespace vkx

@@ -57,4 +57,8 @@ auto CreateImage(Device device, const VkImageCreateInfo *pCreateInfo,
 		 const VkAllocationCallbacks *pAllocator, Image *pImage)
     -> VkResult;
 
+auto CreateImageView(Device device, const VkImageViewCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator, ImageView *pView)
+    -> VkResult;
+
 } // namespace vkx

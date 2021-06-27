@@ -97,4 +97,10 @@ auto CreateImage(Device device, const VkImageCreateInfo *pCreateInfo,
   return CreateObject<Image>(device, pCreateInfo, pAllocator, pImage);
 }
 
+auto CreateImageView(Device device, const VkImageViewCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator, ImageView *pView)
+    -> VkResult {
+  return CreateObject<ImageView>(device, pCreateInfo, pAllocator, pView);
+}
+
 } // namespace vkx

@@ -135,11 +135,9 @@ void VulkanRenderer::cleanup() {
   vkDestroySampler(mainDevice.logicalDevice, textureSampler, nullptr);
 
   for (size_t i = 0; i < textureImages.size(); i++) {
-    vkDestroyImageView(mainDevice.logicalDevice, textureImageViews[i], nullptr);
     vkFreeMemory(mainDevice.logicalDevice, textureImageMemory[i], nullptr);
   }
 
-  vkDestroyImageView(mainDevice.logicalDevice, depthBufferImageView, nullptr);
   vkFreeMemory(mainDevice.logicalDevice, depthBufferImageMemory, nullptr);
 
   vkDestroyDescriptorPool(mainDevice.logicalDevice, descriptorPool, nullptr);
@@ -158,9 +156,6 @@ void VulkanRenderer::cleanup() {
   vkDestroyCommandPool(mainDevice.logicalDevice, graphicsCommandPool, nullptr);
   for (auto framebuffer : swapChainFramebuffers) {
     vkDestroyFramebuffer(mainDevice.logicalDevice, framebuffer, nullptr);
-  }
-  for (auto image : swapChainImages) {
-    vkDestroyImageView(mainDevice.logicalDevice, image.imageView, nullptr);
   }
 }
 
@@ -1757,8 +1752,8 @@ vkx::Image VulkanRenderer::createImage(uint32_t width, uint32_t height,
   return image;
 }
 
-VkImageView VulkanRenderer::createImageView(VkImage image, VkFormat format,
-					    VkImageAspectFlags aspectFlags) {
+vkx::ImageView VulkanRenderer::createImageView(VkImage image, VkFormat format,
+					       VkImageAspectFlags aspectFlags) {
   VkImageViewCreateInfo viewCreateInfo = {};
   viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   viewCreateInfo.image = image; // Image to create view for
@@ -1786,9 +1781,9 @@ VkImageView VulkanRenderer::createImageView(VkImage image, VkFormat format,
       1; // Number of array levels to view
 
   // Create image view and return it
-  VkImageView imageView;
-  VkResult result = vkCreateImageView(mainDevice.logicalDevice, &viewCreateInfo,
-				      nullptr, &imageView);
+  vkx::ImageView imageView;
+  VkResult result = vkx::CreateImageView(mainDevice.logicalDevice,
+					 &viewCreateInfo, nullptr, &imageView);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create an Image View!");
   }
@@ -1881,7 +1876,7 @@ int VulkanRenderer::createTexture(std::string fileName) {
   int textureImageLoc = createTextureImage(fileName);
 
   // Create Image View and add to list
-  VkImageView imageView =
+  vkx::ImageView imageView =
       createImageView(textureImages[textureImageLoc], VK_FORMAT_R8G8B8A8_UNORM,
 		      VK_IMAGE_ASPECT_COLOR_BIT);
   textureImageViews.push_back(imageView);
@@ -1893,7 +1888,7 @@ int VulkanRenderer::createTexture(std::string fileName) {
   return descriptorLoc;
 }
 
-int VulkanRenderer::createTextureDescriptor(VkImageView textureImage) {
+int VulkanRenderer::createTextureDescriptor(vkx::ImageView textureImage) {
   VkDescriptorSet descriptorSet;
 
   // Descriptor Set Allocation Info

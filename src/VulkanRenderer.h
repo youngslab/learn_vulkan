@@ -72,7 +72,7 @@ private:
 
   vkx::Image depthBufferImage;
   VkDeviceMemory depthBufferImageMemory;
-  VkImageView depthBufferImageView;
+  vkx::ImageView depthBufferImageView;
 
   VkSampler textureSampler;
 
@@ -100,7 +100,7 @@ private:
 
   std::vector<vkx::Image> textureImages;
   std::vector<VkDeviceMemory> textureImageMemory;
-  std::vector<VkImageView> textureImageViews;
+  std::vector<vkx::ImageView> textureImageViews;
 
   // - Pipeline
   vkx::Pipeline graphicsPipeline;
@@ -180,13 +180,13 @@ private:
 			 VkImageTiling tiling, VkImageUsageFlags useFlags,
 			 VkMemoryPropertyFlags propFlags,
 			 VkDeviceMemory *imageMemory);
-  VkImageView createImageView(VkImage image, VkFormat format,
-			      VkImageAspectFlags aspectFlags);
+  vkx::ImageView createImageView(VkImage image, VkFormat format,
+				 VkImageAspectFlags aspectFlags);
   VkShaderModule createShaderModule(const std::vector<char> &code);
 
   int createTextureImage(std::string fileName);
   int createTexture(std::string fileName);
-  int createTextureDescriptor(VkImageView textureImage);
+  int createTextureDescriptor(vkx::ImageView textureImage);
 
   // -- Loader Functions
   stbi_uc *loadTextureFile(std::string fileName, int *width, int *height,
