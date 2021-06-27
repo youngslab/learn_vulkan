@@ -66,5 +66,6 @@ using RenderPass = Object<VkRenderPass>;
 using DescriptorSetLayout = Object<VkDescriptorSetLayout>;
 using PipelineLayout = Object<VkPipelineLayout>;
 using Pipeline = Object<VkPipeline>;
+using Image = Object<VkImage>;
 
 } // namespace vkx

@@ -81,7 +81,7 @@ auto CreatePipelineLayout(Device device,
 				      pPipelineLayout);
 }
 
-auto CreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
+auto CreateGraphicsPipelines(Device device, VkPipelineCache pipelineCache,
 			     uint32_t createInfoCount,
 			     const VkGraphicsPipelineCreateInfo *pCreateInfos,
 			     const VkAllocationCallbacks *pAllocator,
@@ -89,6 +89,12 @@ auto CreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache,
   // TODO: Supprots creating multiple instnace.
   return CreateObject<Pipeline>(device, pipelineCache, createInfoCount,
 				pCreateInfos, pAllocator, pPipelines);
+}
+
+auto CreateImage(Device device, const VkImageCreateInfo *pCreateInfo,
+		 const VkAllocationCallbacks *pAllocator, Image *pImage)
+    -> VkResult {
+  return CreateObject<Image>(device, pCreateInfo, pAllocator, pImage);
 }
 
 } // namespace vkx

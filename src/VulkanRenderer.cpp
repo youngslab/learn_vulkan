@@ -136,12 +136,10 @@ void VulkanRenderer::cleanup() {
 
   for (size_t i = 0; i < textureImages.size(); i++) {
     vkDestroyImageView(mainDevice.logicalDevice, textureImageViews[i], nullptr);
-    vkDestroyImage(mainDevice.logicalDevice, textureImages[i], nullptr);
     vkFreeMemory(mainDevice.logicalDevice, textureImageMemory[i], nullptr);
   }
 
   vkDestroyImageView(mainDevice.logicalDevice, depthBufferImageView, nullptr);
-  vkDestroyImage(mainDevice.logicalDevice, depthBufferImage, nullptr);
   vkFreeMemory(mainDevice.logicalDevice, depthBufferImageMemory, nullptr);
 
   vkDestroyDescriptorPool(mainDevice.logicalDevice, descriptorPool, nullptr);
@@ -1698,11 +1696,11 @@ VulkanRenderer::chooseSupportedFormat(const std::vector<VkFormat> &formats,
   throw std::runtime_error("Failed to find a matching format!");
 }
 
-VkImage VulkanRenderer::createImage(uint32_t width, uint32_t height,
-				    VkFormat format, VkImageTiling tiling,
-				    VkImageUsageFlags useFlags,
-				    VkMemoryPropertyFlags propFlags,
-				    VkDeviceMemory *imageMemory) {
+vkx::Image VulkanRenderer::createImage(uint32_t width, uint32_t height,
+				       VkFormat format, VkImageTiling tiling,
+				       VkImageUsageFlags useFlags,
+				       VkMemoryPropertyFlags propFlags,
+				       VkDeviceMemory *imageMemory) {
   // CREATE IMAGE
   // Image Creation Info
   VkImageCreateInfo imageCreateInfo = {};
@@ -1726,9 +1724,9 @@ VkImage VulkanRenderer::createImage(uint32_t width, uint32_t height,
       VK_SHARING_MODE_EXCLUSIVE; // Whether image can be shared between queues
 
   // Create image
-  VkImage image;
-  VkResult result = vkCreateImage(mainDevice.logicalDevice, &imageCreateInfo,
-				  nullptr, &image);
+  vkx::Image image;
+  VkResult result = vkx::CreateImage(mainDevice.logicalDevice, &imageCreateInfo,
+				     nullptr, &image);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create an Image!");
   }
@@ -1840,11 +1838,10 @@ int VulkanRenderer::createTextureImage(std::string fileName) {
   memcpy(data, imageData, static_cast<size_t>(imageSize));
   vkUnmapMemory(mainDevice.logicalDevice, imageStagingBufferMemory);
 
-  // Free original image data
-  stbi_image_free(imageData);
+  // Free original image data stbi_image_free(imageData);
 
   // Create image to hold final texture
-  VkImage texImage;
+  vkx::Image texImage;
   VkDeviceMemory texImageMemory;
   texImage = createImage(
       width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
