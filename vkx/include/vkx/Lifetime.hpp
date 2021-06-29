@@ -6,7 +6,6 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <vkx/TypeInfo.hpp>
-#include <vkx/Resource.hpp>
 
 namespace vkx {
 template <typename T> class AutoDeletable {
