@@ -126,6 +126,12 @@ auto CreateSampler(Device device, const VkSamplerCreateInfo *pCreateInfo,
   return CreateObject<Sampler>(device, pCreateInfo, pAllocator, pSampler);
 }
 
+auto CreateBuffer(Device device, const VkBufferCreateInfo *pCreateInfo,
+		  const VkAllocationCallbacks *pAllocator, Buffer *pBuffer)
+    -> VkResult {
+  return CreateObject<Buffer>(device, pCreateInfo, pAllocator, pBuffer);
+}
+
 auto AllocateCommandBuffers(Device device, CommandPool commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult {

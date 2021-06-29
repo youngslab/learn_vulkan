@@ -93,11 +93,11 @@ static uint32_t findMemoryTypeIndex(VkPhysicalDevice physicalDevice,
   }
 }
 
-static void createBuffer(VkPhysicalDevice physicalDevice, VkDevice device,
+static void createBuffer(VkPhysicalDevice physicalDevice, vkx::Device device,
 			 VkDeviceSize bufferSize,
 			 VkBufferUsageFlags bufferUsage,
 			 VkMemoryPropertyFlags bufferProperties,
-			 VkBuffer *buffer, VkDeviceMemory *bufferMemory) {
+			 vkx::Buffer *buffer, VkDeviceMemory *bufferMemory) {
   // CREATE VERTEX BUFFER
   // Information to create a buffer (doesn't include assigning memory)
   VkBufferCreateInfo bufferInfo = {};
@@ -109,7 +109,7 @@ static void createBuffer(VkPhysicalDevice physicalDevice, VkDevice device,
       VK_SHARING_MODE_EXCLUSIVE; // Similar to Swap Chain images, can share
 				 // vertex buffers
 
-  VkResult result = vkCreateBuffer(device, &bufferInfo, nullptr, buffer);
+  VkResult result = vkx::CreateBuffer(device, &bufferInfo, nullptr, buffer);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Vertex Buffer!");
   }

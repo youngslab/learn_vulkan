@@ -86,7 +86,7 @@ private:
   std::vector<VkDescriptorSet> descriptorSets;
   std::vector<VkDescriptorSet> samplerDescriptorSets;
 
-  std::vector<VkBuffer> vpUniformBuffer;
+  std::vector<vkx::Buffer> vpUniformBuffer;
   std::vector<VkDeviceMemory> vpUniformBufferMemory;
 
   std::vector<VkBuffer> modelDUniformBuffer;

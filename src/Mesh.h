@@ -8,49 +8,52 @@
 #include "Utilities.h"
 
 struct Model {
-	glm::mat4 model;
+  glm::mat4 model;
 };
 
-class Mesh
-{
+class Mesh {
 public:
-	Mesh();
-	Mesh(VkPhysicalDevice newPhysicalDevice, VkDevice newDevice, 
-		VkQueue transferQueue, VkCommandPool transferCommandPool, 
-		std::vector<Vertex> * vertices, std::vector<uint32_t> * indices,
-		int newTexId);
+  Mesh();
+  Mesh(VkPhysicalDevice newPhysicalDevice, vkx::Device newDevice,
+       VkQueue transferQueue, VkCommandPool transferCommandPool,
+       std::vector<Vertex> *vertices, std::vector<uint32_t> *indices,
+       int newTexId);
 
-	void setModel(glm::mat4 newModel);
-	Model getModel();
+  void setModel(glm::mat4 newModel);
+  Model getModel();
 
-	int getTexId();
+  int getTexId();
 
-	int getVertexCount();
-	VkBuffer getVertexBuffer();
+  int getVertexCount();
+  vkx::Buffer getVertexBuffer();
 
-	int getIndexCount();
-	VkBuffer getIndexBuffer();
+  int getIndexCount();
+  vkx::Buffer getIndexBuffer();
 
-	void destroyBuffers();
+  void destroyBuffers();
 
-	~Mesh();
+  ~Mesh();
 
 private:
-	Model model;
-	int texId;
+  Model model;
+  int texId;
 
-	int vertexCount;
-	VkBuffer vertexBuffer;
-	VkDeviceMemory vertexBufferMemory;
+  int vertexCount;
+  vkx::Buffer vertexBuffer;
+  VkDeviceMemory vertexBufferMemory;
 
-	int indexCount;
-	VkBuffer indexBuffer;
-	VkDeviceMemory indexBufferMemory;
+  int indexCount;
+  vkx::Buffer indexBuffer;
+  VkDeviceMemory indexBufferMemory;
 
-	VkPhysicalDevice physicalDevice;
-	VkDevice device;
+  VkPhysicalDevice physicalDevice;
+  vkx::Device device;
 
-	void createVertexBuffer(VkQueue transferQueue, VkCommandPool transferCommandPool, std::vector<Vertex> * vertices);
-	void createIndexBuffer(VkQueue transferQueue, VkCommandPool transferCommandPool, std::vector<uint32_t> * indices);
+  void createVertexBuffer(VkQueue transferQueue,
+			  VkCommandPool transferCommandPool,
+			  std::vector<Vertex> *vertices);
+  void createIndexBuffer(VkQueue transferQueue,
+			 VkCommandPool transferCommandPool,
+			 std::vector<uint32_t> *indices);
 };
 

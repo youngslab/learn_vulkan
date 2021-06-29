@@ -140,7 +140,6 @@ void VulkanRenderer::cleanup() {
 
   vkDestroyDescriptorPool(mainDevice.logicalDevice, descriptorPool, nullptr);
   for (size_t i = 0; i < swapChainImages.size(); i++) {
-    vkDestroyBuffer(mainDevice.logicalDevice, vpUniformBuffer[i], nullptr);
     vkFreeMemory(mainDevice.logicalDevice, vpUniformBufferMemory[i], nullptr);
     // vkDestroyBuffer(mainDevice.logicalDevice, modelDUniformBuffer[i],
     // nullptr); vkFreeMemory(mainDevice.logicalDevice,
@@ -1304,16 +1303,15 @@ void VulkanRenderer::recordCommands(uint32_t currentImage) {
 
     for (size_t k = 0; k < thisModel.getMeshCount(); k++) {
 
-      VkBuffer vertexBuffers[] = {
-	  thisModel.getMesh(k)->getVertexBuffer()}; // Buffers to bind
+      auto indextBuffer = thisModel.getMesh(k)->getIndexBuffer();
+      VkBuffer vertexBuffers[] = {indextBuffer}; // Buffers to bind
       VkDeviceSize offsets[] = {0}; // Offsets into buffers being bound
       vkCmdBindVertexBuffers(
 	  commandBuffers[currentImage], 0, 1, vertexBuffers,
 	  offsets); // Command to bind vertex buffer before drawing with them
 
       // Bind mesh index buffer, with 0 offset and using the uint32 type
-      vkCmdBindIndexBuffer(commandBuffers[currentImage],
-			   thisModel.getMesh(k)->getIndexBuffer(), 0,
+      vkCmdBindIndexBuffer(commandBuffers[currentImage], indextBuffer, 0,
 			   VK_INDEX_TYPE_UINT32);
 
       // Dynamic Offset Amount
@@ -1814,7 +1812,7 @@ int VulkanRenderer::createTextureImage(std::string fileName) {
   stbi_uc *imageData = loadTextureFile(fileName, &width, &height, &imageSize);
 
   // Create staging buffer to hold loaded data, ready to copy to device
-  VkBuffer imageStagingBuffer;
+  vkx::Buffer imageStagingBuffer;
   VkDeviceMemory imageStagingBufferMemory;
   createBuffer(mainDevice.physicalDevice, mainDevice.logicalDevice, imageSize,
 	       VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -1860,7 +1858,6 @@ int VulkanRenderer::createTextureImage(std::string fileName) {
   textureImageMemory.push_back(texImageMemory);
 
   // Destroy staging buffers
-  vkDestroyBuffer(mainDevice.logicalDevice, imageStagingBuffer, nullptr);
   vkFreeMemory(mainDevice.logicalDevice, imageStagingBufferMemory, nullptr);
 
   // Return index of new texture image
