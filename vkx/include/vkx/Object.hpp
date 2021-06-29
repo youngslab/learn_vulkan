@@ -13,38 +13,31 @@ namespace vkx {
 // manage dependency
 template <typename Resource>
 class Object : public Dependable, public AutoDeletable<Resource> {
+private:
+  template <typename T> void DependIf(Object<T> object) {
+    this->Depend(object);
+  }
+  template <typename T> void DependIf(T t) {}
+
 public:
   Object() {}
+
   Object(Object const &rhs) : AutoDeletable<Resource>(rhs), Dependable(rhs) {}
+
   Object(std::function<void(Resource)> deleter)
       : AutoDeletable<Resource>(VK_NULL_HANDLE, deleter) {}
+
   Object(Resource handle, std::function<void(Resource)> deleter)
       : AutoDeletable<Resource>(handle, deleter) {}
-
-  template <typename T, typename... Args>
-  Object(Object<T> dependency, Args... args)
-      : AutoDeletable<Resource>(
-	    CreateHandle<Resource>(dependency, args...),
-	    CreateDeleterDebug<Resource>(dependency, args...)) {
-    this->Depend(dependency);
-  }
 
   template <typename... Args>
   Object(Args... args)
       : AutoDeletable<Resource>(CreateHandle<Resource>(args...),
-				CreateDeleterDebug<Resource>(args...)) {}
+				CreateDeleterDebug<Resource>(args...)) {
+    bool z[] = {(this->DependIf(args), true)...};
+    (void)z;
+  }
 };
-
-// template <typename Resource, typename... Args> //
-// auto CreateObject(Args... args) -> VkResult {
-// using ObjectType = std::remove_pointer_t<last_t<Args...>>;
-// auto deleter = std::apply(VulkanTypeInfo<Resource>::Destroy2,
-// drop_last(args...));
-// ObjectType *pObject = get_last(args...);
-//*pObject = Object(deleter);
-// return  std::apply(VulkanTypeInfo<Resource>::Create,
-// std::tuple_cat(drop_last(args...), pObject->data()));
-//}
 
 // Abstract the way to create vulkan objects.
 template <typename ObjectType, typename... Args> //

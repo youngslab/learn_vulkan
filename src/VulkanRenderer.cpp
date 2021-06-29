@@ -1002,15 +1002,12 @@ void VulkanRenderer::createCommandBuffers() {
   cbAllocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
   // Allocate command buffers and place handles in array of buffers
-  VkResult result = vkx::AllocateCommandBuffers(
-      mainDevice.logicalDevice, &cbAllocInfo, commandBuffers.data());
+  // NOTICE: Should have an additional parameter to make dependent relationship.
+  VkResult result =
+      vkx::AllocateCommandBuffers(mainDevice.logicalDevice, graphicsCommandPool,
+				  &cbAllocInfo, commandBuffers.data());
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to allocate Command Buffers!");
-  }
-
-	// TODO: dependency
-  for (int i = 0; i < commandBuffers.size(); i++) {
-    commandBuffers[i].Depend(graphicsCommandPool);
   }
 }
 

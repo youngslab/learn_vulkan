@@ -120,7 +120,7 @@ auto CreateCommandPool(Device device,
 				   pCommandPool);
 }
 
-auto AllocateCommandBuffers(Device device,
+auto AllocateCommandBuffers(Device device, CommandPool commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult {
   auto count = pAllocateInfo->commandBufferCount;
@@ -128,7 +128,8 @@ auto AllocateCommandBuffers(Device device,
   auto info = *pAllocateInfo;
   info.commandBufferCount = 1;
   for (auto i = 0u; i < count; i++) {
-    res = CreateObject<CommandBuffer>(device, &info, &pCommandBuffers[i]);
+    res = CreateObject<CommandBuffer>(device, commandPool, &info,
+				      &pCommandBuffers[i]);
     if (res != VK_SUCCESS)
       return res;
   }

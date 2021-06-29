@@ -107,10 +107,17 @@ template <> struct VulkanTypeInfo<VkPipeline> {
   }
 };
 
+static auto
+AllocateCommandBuffers(VkDevice device, VkCommandPool,
+		       const VkCommandBufferAllocateInfo *pAllocateInfo,
+		       VkCommandBuffer *pCommandBuffers) {
+  return vkAllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
+}
+
 template <> struct VulkanTypeInfo<VkCommandBuffer> {
   static constexpr auto Name = "VkCommandBuffer";
   static constexpr auto Destroy = vkFreeCommandBuffers;
-  static constexpr auto Create = vkAllocateCommandBuffers;
+  static constexpr auto Create = AllocateCommandBuffers;
 };
 
 template <typename Resource, typename... Args>
@@ -168,15 +175,10 @@ static auto CreateDeleter(VkDevice device, VkPipelineCache pipelineCache,
   };
 }
 
-// vkAllocateCommandBuffers(VkDevice device,
-// const VkCommandBufferAllocateInfo *pAllocateInfo,
-// VkCommandBuffer *pCommandBuffers)
-
 template <typename T>
-static auto CreateDeleter(VkDevice device,
+static auto CreateDeleter(VkDevice device, VkCommandPool commandPool,
 			  const VkCommandBufferAllocateInfo *pAllocateInfo)
     -> std::function<void(T)> {
-  auto commandPool = pAllocateInfo->commandPool;
   return [device, commandPool](T handle) {
     VulkanTypeInfo<T>::Destroy(device, commandPool, 1, &handle);
   };
