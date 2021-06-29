@@ -12,7 +12,7 @@ namespace vkx {
 
 // manage dependency
 template <typename Resource>
-class Object : public AutoDeletable<Resource>, public Dependable {
+class Object : public Dependable, public AutoDeletable<Resource> {
 public:
   Object() {}
   Object(Object const &rhs) : AutoDeletable<Resource>(rhs), Dependable(rhs) {}
@@ -23,15 +23,16 @@ public:
 
   template <typename T, typename... Args>
   Object(Object<T> dependency, Args... args)
-      : AutoDeletable<Resource>(CreateHandle<Resource>(dependency, args...),
-				CreateDeleter<Resource>(dependency, args...)) {
+      : AutoDeletable<Resource>(
+	    CreateHandle<Resource>(dependency, args...),
+	    CreateDeleterDebug<Resource>(dependency, args...)) {
     this->Depend(dependency);
   }
 
   template <typename... Args>
   Object(Args... args)
       : AutoDeletable<Resource>(CreateHandle<Resource>(args...),
-				CreateDeleter<Resource>(args...)) {}
+				CreateDeleterDebug<Resource>(args...)) {}
 };
 
 // template <typename Resource, typename... Args> //
@@ -71,5 +72,6 @@ using Image = Object<VkImage>;
 using ImageView = Object<VkImageView>;
 using Framebuffer = Object<VkFramebuffer>;
 using CommandPool = Object<VkCommandPool>;
+using CommandBuffer = Object<VkCommandBuffer>;
 
 } // namespace vkx

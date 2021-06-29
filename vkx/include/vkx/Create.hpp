@@ -70,4 +70,9 @@ auto CreateCommandPool(Device device,
 		       const VkCommandPoolCreateInfo *pCreateInfo,
 		       const VkAllocationCallbacks *pAllocator,
 		       CommandPool *pCommandPool) -> VkResult;
+
+auto AllocateCommandBuffers(Device device,
+			    const VkCommandBufferAllocateInfo *pAllocateInfo,
+			    CommandBuffer *pCommandBuffers) -> VkResult;
+
 } // namespace vkx

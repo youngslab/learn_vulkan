@@ -120,4 +120,19 @@ auto CreateCommandPool(Device device,
 				   pCommandPool);
 }
 
+auto AllocateCommandBuffers(Device device,
+			    const VkCommandBufferAllocateInfo *pAllocateInfo,
+			    CommandBuffer *pCommandBuffers) -> VkResult {
+  auto count = pAllocateInfo->commandBufferCount;
+  auto res = VK_SUCCESS;
+  auto info = *pAllocateInfo;
+  info.commandBufferCount = 1;
+  for (auto i = 0u; i < count; i++) {
+    res = CreateObject<CommandBuffer>(device, &info, &pCommandBuffers[i]);
+    if (res != VK_SUCCESS)
+      return res;
+  }
+  return res;
+}
+
 } // namespace vkx

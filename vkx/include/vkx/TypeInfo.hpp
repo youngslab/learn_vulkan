@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <iostream>
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -105,6 +107,12 @@ template <> struct VulkanTypeInfo<VkPipeline> {
   }
 };
 
+template <> struct VulkanTypeInfo<VkCommandBuffer> {
+  static constexpr auto Name = "VkCommandBuffer";
+  static constexpr auto Destroy = vkFreeCommandBuffers;
+  static constexpr auto Create = vkAllocateCommandBuffers;
+};
+
 template <typename Resource, typename... Args>
 auto CreateHandle(Args... args) -> Resource {
   Resource handle;
@@ -116,8 +124,6 @@ auto CreateHandle(Args... args) -> Resource {
   }
   return handle;
 }
-
-// Deleter는 handle을 만들때 사용된 인자를 동일하게 사용하여 만들어 진다.
 
 template <typename T, typename Dependency, typename CreateInfo>
 static auto CreateDeleter(Dependency dep, CreateInfo,
@@ -161,5 +167,29 @@ static auto CreateDeleter(VkDevice device, VkPipelineCache pipelineCache,
     VulkanTypeInfo<T>::Destroy(device, handle, pAllocator);
   };
 }
+
+// vkAllocateCommandBuffers(VkDevice device,
+// const VkCommandBufferAllocateInfo *pAllocateInfo,
+// VkCommandBuffer *pCommandBuffers)
+
+template <typename T>
+static auto CreateDeleter(VkDevice device,
+			  const VkCommandBufferAllocateInfo *pAllocateInfo)
+    -> std::function<void(T)> {
+  auto commandPool = pAllocateInfo->commandPool;
+  return [device, commandPool](T handle) {
+    VulkanTypeInfo<T>::Destroy(device, commandPool, 1, &handle);
+  };
+}
+
+template <typename T, typename... Args>
+static auto CreateDeleterDebug(Args... args) -> std::function<void(T)> {
+  auto deleter = CreateDeleter<T>(args...);
+  return [deleter](T handle) {
+    std::cout << "delete " << VulkanTypeInfo<T>::Name << "\n";
+    deleter(handle);
+  };
+}
+
 } // namespace vkx
 

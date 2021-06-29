@@ -84,8 +84,8 @@ void VulkanRenderer::draw() {
   submitInfo.pWaitDstStageMask = waitStages; // Stages to check semaphores at
   submitInfo.commandBufferCount = 1; // Number of command buffers to submit
   submitInfo.pCommandBuffers =
-      &commandBuffers[imageIndex];     // Command buffer to submit
-  submitInfo.signalSemaphoreCount = 1; // Number of semaphores to signal
+      commandBuffers[imageIndex].data(); // Command buffer to submit
+  submitInfo.signalSemaphoreCount = 1;	 // Number of semaphores to signal
   submitInfo.pSignalSemaphores =
       &renderFinished[currentFrame]; // Semaphores to signal when command buffer
 				     // finishes
@@ -1002,10 +1002,15 @@ void VulkanRenderer::createCommandBuffers() {
   cbAllocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
   // Allocate command buffers and place handles in array of buffers
-  VkResult result = vkAllocateCommandBuffers(
+  VkResult result = vkx::AllocateCommandBuffers(
       mainDevice.logicalDevice, &cbAllocInfo, commandBuffers.data());
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to allocate Command Buffers!");
+  }
+
+	// TODO: dependency
+  for (int i = 0; i < commandBuffers.size(); i++) {
+    commandBuffers[i].Depend(graphicsCommandPool);
   }
 }
 
