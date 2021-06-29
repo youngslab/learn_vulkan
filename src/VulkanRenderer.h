@@ -74,7 +74,7 @@ private:
   VkDeviceMemory depthBufferImageMemory;
   vkx::ImageView depthBufferImageView;
 
-  VkSampler textureSampler;
+  vkx::Sampler textureSampler;
 
   // - Descriptors
   vkx::DescriptorSetLayout descriptorSetLayout;

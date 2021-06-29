@@ -71,6 +71,10 @@ auto CreateCommandPool(Device device,
 		       const VkAllocationCallbacks *pAllocator,
 		       CommandPool *pCommandPool) -> VkResult;
 
+auto CreateSampler(Device device, const VkSamplerCreateInfo *pCreateInfo,
+		   const VkAllocationCallbacks *pAllocator, Sampler *pSampler)
+    -> VkResult;
+
 auto AllocateCommandBuffers(Device device, CommandPool commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult;

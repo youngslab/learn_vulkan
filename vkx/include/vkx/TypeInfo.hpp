@@ -53,6 +53,7 @@ DEFINE_VULKAN_TYPE_INFO(DescriptorSetLayout);
 DEFINE_VULKAN_TYPE_INFO(PipelineLayout);
 DEFINE_VULKAN_TYPE_INFO(Framebuffer);
 DEFINE_VULKAN_TYPE_INFO(CommandPool);
+DEFINE_VULKAN_TYPE_INFO(Sampler);
 
 // GLFW
 // Adaptor which provides the same way to create vulkan instance

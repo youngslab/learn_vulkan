@@ -132,8 +132,6 @@ void VulkanRenderer::cleanup() {
   vkDestroyDescriptorPool(mainDevice.logicalDevice, samplerDescriptorPool,
 			  nullptr);
 
-  vkDestroySampler(mainDevice.logicalDevice, textureSampler, nullptr);
-
   for (size_t i = 0; i < textureImages.size(); i++) {
     vkFreeMemory(mainDevice.logicalDevice, textureImageMemory[i], nullptr);
   }
@@ -1067,7 +1065,7 @@ void VulkanRenderer::createTextureSampler() {
   samplerCreateInfo.anisotropyEnable = VK_TRUE; // Enable Anisotropy
   samplerCreateInfo.maxAnisotropy = 16;		// Anisotropy sample level
 
-  VkResult result = vkCreateSampler(
+  VkResult result = vkx::CreateSampler(
       mainDevice.logicalDevice, &samplerCreateInfo, nullptr, &textureSampler);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Filed to create a Texture Sampler!");

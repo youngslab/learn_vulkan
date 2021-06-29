@@ -66,5 +66,6 @@ using ImageView = Object<VkImageView>;
 using Framebuffer = Object<VkFramebuffer>;
 using CommandPool = Object<VkCommandPool>;
 using CommandBuffer = Object<VkCommandBuffer>;
+using Sampler = Object<VkSampler>;
 
 } // namespace vkx
