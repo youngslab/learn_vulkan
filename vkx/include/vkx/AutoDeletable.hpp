@@ -3,10 +3,6 @@
 #include <memory>
 #include <functional>
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <vkx/TypeInfo.hpp>
-
 namespace vkx {
 template <typename T> class AutoDeletable {
 private:
@@ -35,23 +31,5 @@ auto MakeAutoDeletable(T handle, std::function<void(T)> deleter)
   return AutoDeletable(handle, deleter);
 }
 
-template <typename Resource, typename... Args>
-auto CreateHandle(Args... args) -> Resource {
-  Resource handle;
-  auto result = VulkanTypeInfo<Resource>::Create(args..., &handle);
-  if (result != VK_SUCCESS) {
-    // TODO: formatting string with result.
-    throw std::runtime_error(std::string("Failed to create a handle - ") +
-			     VulkanTypeInfo<Resource>::Name);
-  }
-  return handle;
-}
-
-template <typename Resource, typename... Args>
-auto CreateDeleter(Args... args) -> std::function<void(Resource)> {
-  return [=](Resource handle) {
-    VulkanTypeInfo<Resource>::Destroy2(handle, args...);
-  };
-}
 
 } // namespace vkx

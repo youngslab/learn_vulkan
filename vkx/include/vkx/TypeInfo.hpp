@@ -147,5 +147,24 @@ template <> struct VulkanTypeInfo<VkPipeline> {
   }
 };
 
+template <typename Resource, typename... Args>
+auto CreateHandle(Args... args) -> Resource {
+  Resource handle;
+  auto result = VulkanTypeInfo<Resource>::Create(args..., &handle);
+  if (result != VK_SUCCESS) {
+    // TODO: formatting string with result.
+    throw std::runtime_error(std::string("Failed to create a handle - ") +
+			     VulkanTypeInfo<Resource>::Name);
+  }
+  return handle;
+}
+
+template <typename Resource, typename... Args>
+auto CreateDeleter(Args... args) -> std::function<void(Resource)> {
+  return [=](Resource handle) {
+    VulkanTypeInfo<Resource>::Destroy2(handle, args...);
+  };
+}
+
 } // namespace vkx
 

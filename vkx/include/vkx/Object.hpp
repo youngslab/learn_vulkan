@@ -3,7 +3,8 @@
 
 #include <memory>
 #include <functional>
-#include <vkx/Lifetime.hpp>
+#include <vkx/AutoDeletable.hpp>
+#include <vkx/TypeInfo.hpp>
 #include <vkx/Tmp.hpp>
 #include <vkx/Dependable.hpp>
 
