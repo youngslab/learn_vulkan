@@ -12,57 +12,22 @@ namespace vkx {
 
 template <typename T> struct VulkanTypeInfo;
 
-template <typename Resource> struct Destroyer {
-  template <typename Dependency, typename CreateInfo>
-  static auto Destroy2(Resource handle, Dependency dep, CreateInfo,
-		       const VkAllocationCallbacks *pAllocator) {
-    if (handle == VK_NULL_HANDLE)
-      return;
-    VulkanTypeInfo<Resource>::Destroy(dep, handle, pAllocator);
-  }
-
-  template <typename CreateInfo>
-  static auto Destroy2(Resource handle, CreateInfo,
-		       const VkAllocationCallbacks *pAllocator) {
-    if (handle == VK_NULL_HANDLE)
-      return;
-    VulkanTypeInfo<Resource>::Destroy(handle, pAllocator);
-  }
-
-  static auto Destroy2(Resource handle, uint32_t, uint32_t, std::string) {
-    if (handle == VK_NULL_HANDLE)
-      return;
-    VulkanTypeInfo<Resource>::Destroy(handle);
-  }
-
-  static auto Destroy2(Resource device, VkPhysicalDevice,
-		       const VkDeviceCreateInfo *,
-		       const VkAllocationCallbacks *pAllocator) {
-    VulkanTypeInfo<Resource>::Destroy(device, pAllocator);
-  }
-};
-
 #define DEFINE_VULKAN_TYPE_INFO(RESOURCE)                                      \
-  template <> struct VulkanTypeInfo<Vk##RESOURCE> : Destroyer<Vk##RESOURCE> {  \
-    using CreateInfo = Vk##RESOURCE##CreateInfo;                               \
+  template <> struct VulkanTypeInfo<Vk##RESOURCE> {                            \
     static constexpr auto Create = vkCreate##RESOURCE;                         \
     static constexpr auto Destroy = vkDestroy##RESOURCE;                       \
     static constexpr auto Name = "Vk" #RESOURCE;                               \
   };
 
 #define DEFINE_VULKAN_TYPE_INFO_KHR(RESOURCE)                                  \
-  template <>                                                                  \
-  struct VulkanTypeInfo<Vk##RESOURCE##KHR> : Destroyer<Vk##RESOURCE##KHR> {    \
-    using CreateInfo = Vk##RESOURCE##CreateInfoKHR;                            \
+  template <> struct VulkanTypeInfo<Vk##RESOURCE##KHR> {                       \
     static constexpr auto Create = vkCreate##RESOURCE##KHR;                    \
     static constexpr auto Destroy = vkDestroy##RESOURCE##KHR;                  \
     static constexpr auto Name = "Vk" #RESOURCE;                               \
   };
 
 #define DEFINE_VULKAN_TYPE_INFO_EXT(RESOURCE)                                  \
-  template <>                                                                  \
-  struct VulkanTypeInfo<Vk##RESOURCE##EXT> : Destroyer<Vk##RESOURCE##EXT> {    \
-    using CreateInfo = Vk##RESOURCE##CreateInfoEXT;                            \
+  template <> struct VulkanTypeInfo<Vk##RESOURCE##EXT> {                       \
     static constexpr char const CreateName[] = "vkCreate" #RESOURCE "EXT";     \
     static constexpr char const DestroyName[] = "vkDestroy" #RESOURCE "EXT";   \
     static constexpr auto Create =                                             \
@@ -105,13 +70,13 @@ static auto DeleteGLFWwindow(GLFWwindow *w) -> void {
   glfwTerminate();
 }
 
-template <> struct VulkanTypeInfo<GLFWwindow *> : Destroyer<GLFWwindow *> {
+template <> struct VulkanTypeInfo<GLFWwindow *> {
   static constexpr auto Create = CreateGLFWwindow;
   static constexpr auto Destroy = DeleteGLFWwindow;
   static constexpr auto Name = "GLFWwindow";
 };
 
-template <> struct VulkanTypeInfo<VkSurfaceKHR> : Destroyer<VkSurfaceKHR> {
+template <> struct VulkanTypeInfo<VkSurfaceKHR> {
   static constexpr auto Destroy = vkDestroySurfaceKHR;
   static constexpr auto Create = glfwCreateWindowSurface;
   static constexpr auto Name = "VkSurfaceKHR";
@@ -120,7 +85,7 @@ template <> struct VulkanTypeInfo<VkSurfaceKHR> : Destroyer<VkSurfaceKHR> {
 // special case
 template <> struct VulkanTypeInfo<VkPipeline> {
   static constexpr auto Name = "VkPipeline";
-
+  static constexpr auto Destroy = vkDestroyPipeline;
   static auto Create(VkDevice device, VkPipelineCache pipelineCache,
 		     uint32_t createInfoCount,
 		     const VkGraphicsPipelineCreateInfo *pCreateInfos,
@@ -138,13 +103,6 @@ template <> struct VulkanTypeInfo<VkPipeline> {
     return vkCreateComputePipelines(device, pipelineCache, createInfoCount,
 				    pCreateInfos, pAllocator, pPipelines);
   }
-
-  template <typename CreateInfo>
-  static auto Destroy2(VkPipeline pipeline, VkDevice device, VkPipelineCache,
-		       uint32_t, const CreateInfo *,
-		       const VkAllocationCallbacks *pAllocator) {
-    return vkDestroyPipeline(device, pipeline, pAllocator);
-  }
 };
 
 template <typename Resource, typename... Args>
@@ -159,12 +117,49 @@ auto CreateHandle(Args... args) -> Resource {
   return handle;
 }
 
-template <typename Resource, typename... Args>
-auto CreateDeleter(Args... args) -> std::function<void(Resource)> {
-  return [=](Resource handle) {
-    VulkanTypeInfo<Resource>::Destroy2(handle, args...);
+// Deleter는 handle을 만들때 사용된 인자를 동일하게 사용하여 만들어 진다.
+
+template <typename T, typename Dependency, typename CreateInfo>
+static auto CreateDeleter(Dependency dep, CreateInfo,
+			  const VkAllocationCallbacks *pAllocator)
+    -> std::function<void(T)> {
+  return [dep, pAllocator](T handle) {
+    VulkanTypeInfo<T>::Destroy(dep, handle, pAllocator);
   };
 }
 
+template <typename T, typename CreateInfo>
+static auto CreateDeleter(const CreateInfo *,
+			  const VkAllocationCallbacks *pAllocator)
+    -> std::function<void(T)> {
+  return [pAllocator](T handle) {
+    VulkanTypeInfo<T>::Destroy(handle, pAllocator);
+  };
+}
+
+template <typename T>
+static auto CreateDeleter(int, int, const char *) -> std::function<void(T)> {
+  return [](T handle) { VulkanTypeInfo<T>::Destroy(handle); };
+}
+
+template <typename T>
+static auto CreateDeleter(VkPhysicalDevice, const VkDeviceCreateInfo *,
+			  const VkAllocationCallbacks *pAllocator)
+    -> std::function<void(T)> {
+  return [pAllocator](T handle) {
+    VulkanTypeInfo<T>::Destroy(handle, pAllocator);
+  };
+}
+
+template <typename T, typename CreateInfo>
+static auto CreateDeleter(VkDevice device, VkPipelineCache pipelineCache,
+			  uint32_t createInfoCount,
+			  const CreateInfo *pCreateInfos,
+			  const VkAllocationCallbacks *pAllocator)
+    -> std::function<void(T)> {
+  return [device, pAllocator](T handle) {
+    VulkanTypeInfo<T>::Destroy(device, handle, pAllocator);
+  };
+}
 } // namespace vkx
 
