@@ -307,6 +307,8 @@ void VulkanRenderer::createLogicalDevice() {
 		   &graphicsQueue);
   vkGetDeviceQueue(mainDevice.logicalDevice, indices.presentationFamily, 0,
 		   &presentationQueue);
+
+	mainDevice.logicalDevice.Depend(this->instance);
 }
 
 void VulkanRenderer::createSurface() {
@@ -1303,15 +1305,15 @@ void VulkanRenderer::recordCommands(uint32_t currentImage) {
 
     for (size_t k = 0; k < thisModel.getMeshCount(); k++) {
 
-      auto indextBuffer = thisModel.getMesh(k)->getIndexBuffer();
-      VkBuffer vertexBuffers[] = {indextBuffer}; // Buffers to bind
+      auto vertexBuffer = thisModel.getMesh(k)->getVertexBuffer();
       VkDeviceSize offsets[] = {0}; // Offsets into buffers being bound
       vkCmdBindVertexBuffers(
-	  commandBuffers[currentImage], 0, 1, vertexBuffers,
+	  commandBuffers[currentImage], 0, 1, vertexBuffer.data(),
 	  offsets); // Command to bind vertex buffer before drawing with them
 
+      auto indexBuffer = thisModel.getMesh(k)->getIndexBuffer();
       // Bind mesh index buffer, with 0 offset and using the uint32 type
-      vkCmdBindIndexBuffer(commandBuffers[currentImage], indextBuffer, 0,
+      vkCmdBindIndexBuffer(commandBuffers[currentImage], indexBuffer, 0,
 			   VK_INDEX_TYPE_UINT32);
 
       // Dynamic Offset Amount
