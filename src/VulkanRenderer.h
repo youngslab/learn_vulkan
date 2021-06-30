@@ -81,16 +81,13 @@ private:
   vkx::DescriptorSetLayout samplerSetLayout;
   VkPushConstantRange pushConstantRange;
 
-  VkDescriptorPool descriptorPool;
-  VkDescriptorPool samplerDescriptorPool;
+  vkx::DescriptorPool descriptorPool;
+  vkx::DescriptorPool samplerDescriptorPool;
   std::vector<VkDescriptorSet> descriptorSets;
   std::vector<VkDescriptorSet> samplerDescriptorSets;
 
   std::vector<vkx::Buffer> vpUniformBuffer;
   std::vector<vkx::DeviceMemory> vpUniformBufferMemory;
-
-  std::vector<VkBuffer> modelDUniformBuffer;
-  std::vector<vkx::DeviceMemory> modelDUniformBufferMemory;
 
   // VkDeviceSize minUniformBufferOffset;
   // size_t modelUniformAlignment;

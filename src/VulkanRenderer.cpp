@@ -123,21 +123,6 @@ void VulkanRenderer::cleanup() {
   // Wait until no actions being run on device before destroying
   vkDeviceWaitIdle(mainDevice.logicalDevice);
 
-  //_aligned_free(modelTransferSpace);
-
-  vkDestroyDescriptorPool(mainDevice.logicalDevice, samplerDescriptorPool,
-			  nullptr);
-
-  // vkFreeMemory(mainDevice.logicalDevice, depthBufferImageMemory, nullptr);
-
-  vkDestroyDescriptorPool(mainDevice.logicalDevice, descriptorPool, nullptr);
-  for (size_t i = 0; i < swapChainImages.size(); i++) {
-    // vkFreeMemory(mainDevice.logicalDevice, vpUniformBufferMemory[i],
-    // nullptr);
-    // vkDestroyBuffer(mainDevice.logicalDevice, modelDUniformBuffer[i],
-    // nullptr); vkFreeMemory(mainDevice.logicalDevice,
-    // modelDUniformBufferMemory[i], nullptr);
-  }
   for (size_t i = 0; i < MAX_FRAME_DRAWS; i++) {
     vkDestroySemaphore(mainDevice.logicalDevice, renderFinished[i], nullptr);
     vkDestroySemaphore(mainDevice.logicalDevice, imageAvailable[i], nullptr);
@@ -1124,7 +1109,7 @@ void VulkanRenderer::createDescriptorPool() {
       descriptorPoolSizes.data(); // Pool Sizes to create pool with
 
   // Create Descriptor Pool
-  VkResult result = vkCreateDescriptorPool(
+  VkResult result = vkx::CreateDescriptorPool(
       mainDevice.logicalDevice, &poolCreateInfo, nullptr, &descriptorPool);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Descriptor Pool!");
@@ -1142,9 +1127,9 @@ void VulkanRenderer::createDescriptorPool() {
   samplerPoolCreateInfo.poolSizeCount = 1;
   samplerPoolCreateInfo.pPoolSizes = &samplerPoolSize;
 
-  result =
-      vkCreateDescriptorPool(mainDevice.logicalDevice, &samplerPoolCreateInfo,
-			     nullptr, &samplerDescriptorPool);
+  result = vkx::CreateDescriptorPool(mainDevice.logicalDevice,
+				     &samplerPoolCreateInfo, nullptr,
+				     &samplerDescriptorPool);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to create a Descriptor Pool!");
   }

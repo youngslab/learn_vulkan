@@ -132,6 +132,14 @@ auto CreateBuffer(Device device, const VkBufferCreateInfo *pCreateInfo,
   return CreateObject<Buffer>(device, pCreateInfo, pAllocator, pBuffer);
 }
 
+auto CreateDescriptorPool(Device device,
+			  const VkDescriptorPoolCreateInfo *pCreateInfo,
+			  const VkAllocationCallbacks *pAllocator,
+			  DescriptorPool *pDescriptorPool) -> VkResult {
+  return CreateObject<DescriptorPool>(device, pCreateInfo, pAllocator,
+				      pDescriptorPool);
+}
+
 auto AllocateCommandBuffers(Device device, CommandPool commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult {

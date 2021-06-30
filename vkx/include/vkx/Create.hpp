@@ -79,6 +79,11 @@ auto CreateBuffer(Device device, const VkBufferCreateInfo *pCreateInfo,
 		  const VkAllocationCallbacks *pAllocator, Buffer *pBuffer)
     -> VkResult;
 
+auto CreateDescriptorPool(Device device,
+			  const VkDescriptorPoolCreateInfo *pCreateInfo,
+			  const VkAllocationCallbacks *pAllocator,
+			  DescriptorPool *pDescriptorPool) -> VkResult;
+
 auto AllocateCommandBuffers(Device device, CommandPool commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult;
