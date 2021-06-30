@@ -132,15 +132,12 @@ void VulkanRenderer::cleanup() {
   vkDestroyDescriptorPool(mainDevice.logicalDevice, samplerDescriptorPool,
 			  nullptr);
 
-  for (size_t i = 0; i < textureImages.size(); i++) {
-    vkFreeMemory(mainDevice.logicalDevice, textureImageMemory[i], nullptr);
-  }
-
-  vkFreeMemory(mainDevice.logicalDevice, depthBufferImageMemory, nullptr);
+  // vkFreeMemory(mainDevice.logicalDevice, depthBufferImageMemory, nullptr);
 
   vkDestroyDescriptorPool(mainDevice.logicalDevice, descriptorPool, nullptr);
   for (size_t i = 0; i < swapChainImages.size(); i++) {
-    vkFreeMemory(mainDevice.logicalDevice, vpUniformBufferMemory[i], nullptr);
+    // vkFreeMemory(mainDevice.logicalDevice, vpUniformBufferMemory[i],
+    // nullptr);
     // vkDestroyBuffer(mainDevice.logicalDevice, modelDUniformBuffer[i],
     // nullptr); vkFreeMemory(mainDevice.logicalDevice,
     // modelDUniformBufferMemory[i], nullptr);
@@ -308,7 +305,7 @@ void VulkanRenderer::createLogicalDevice() {
   vkGetDeviceQueue(mainDevice.logicalDevice, indices.presentationFamily, 0,
 		   &presentationQueue);
 
-	mainDevice.logicalDevice.Depend(this->instance);
+  mainDevice.logicalDevice.Depend(this->instance);
 }
 
 void VulkanRenderer::createSurface() {
@@ -1691,7 +1688,7 @@ vkx::Image VulkanRenderer::createImage(uint32_t width, uint32_t height,
 				       VkFormat format, VkImageTiling tiling,
 				       VkImageUsageFlags useFlags,
 				       VkMemoryPropertyFlags propFlags,
-				       VkDeviceMemory *imageMemory) {
+				       vkx::DeviceMemory *imageMemory) {
   // CREATE IMAGE
   // Image Creation Info
   VkImageCreateInfo imageCreateInfo = {};
@@ -1736,8 +1733,8 @@ vkx::Image VulkanRenderer::createImage(uint32_t width, uint32_t height,
   memoryAllocInfo.memoryTypeIndex = findMemoryTypeIndex(
       mainDevice.physicalDevice, memoryRequirements.memoryTypeBits, propFlags);
 
-  result = vkAllocateMemory(mainDevice.logicalDevice, &memoryAllocInfo, nullptr,
-			    imageMemory);
+  result = vkx::AllocateMemory(mainDevice.logicalDevice, &memoryAllocInfo,
+			       nullptr, imageMemory);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to allocate memory for image!");
   }
@@ -1815,7 +1812,7 @@ int VulkanRenderer::createTextureImage(std::string fileName) {
 
   // Create staging buffer to hold loaded data, ready to copy to device
   vkx::Buffer imageStagingBuffer;
-  VkDeviceMemory imageStagingBufferMemory;
+  vkx::DeviceMemory imageStagingBufferMemory;
   createBuffer(mainDevice.physicalDevice, mainDevice.logicalDevice, imageSize,
 	       VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 	       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
@@ -1833,7 +1830,7 @@ int VulkanRenderer::createTextureImage(std::string fileName) {
 
   // Create image to hold final texture
   vkx::Image texImage;
-  VkDeviceMemory texImageMemory;
+  vkx::DeviceMemory texImageMemory;
   texImage = createImage(
       width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
       VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -1860,7 +1857,7 @@ int VulkanRenderer::createTextureImage(std::string fileName) {
   textureImageMemory.push_back(texImageMemory);
 
   // Destroy staging buffers
-  vkFreeMemory(mainDevice.logicalDevice, imageStagingBufferMemory, nullptr);
+  // vkFreeMemory(mainDevice.logicalDevice, imageStagingBufferMemory, nullptr);
 
   // Return index of new texture image
   return textureImages.size() - 1;

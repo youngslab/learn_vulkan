@@ -97,7 +97,7 @@ static void createBuffer(VkPhysicalDevice physicalDevice, vkx::Device device,
 			 VkDeviceSize bufferSize,
 			 VkBufferUsageFlags bufferUsage,
 			 VkMemoryPropertyFlags bufferProperties,
-			 vkx::Buffer *buffer, VkDeviceMemory *bufferMemory) {
+			 vkx::Buffer *buffer, vkx::DeviceMemory *bufferMemory) {
   // CREATE VERTEX BUFFER
   // Information to create a buffer (doesn't include assigning memory)
   VkBufferCreateInfo bufferInfo = {};
@@ -132,7 +132,7 @@ static void createBuffer(VkPhysicalDevice physicalDevice, vkx::Device device,
 			 // placement of data straight into buffer after mapping
 			 // (otherwise would have to specify manually) Allocate
 			 // memory to VkDeviceMemory
-  result = vkAllocateMemory(device, &memoryAllocInfo, nullptr, bufferMemory);
+  result = vkx::AllocateMemory(device, &memoryAllocInfo, nullptr, bufferMemory);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to allocate Vertex Buffer Memory!");
   }

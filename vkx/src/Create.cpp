@@ -148,4 +148,10 @@ auto AllocateCommandBuffers(Device device, CommandPool commandPool,
   return res;
 }
 
+auto AllocateMemory(Device device, const VkMemoryAllocateInfo *pAllocateInfo,
+		    const VkAllocationCallbacks *pAllocator,
+		    DeviceMemory *pMemory) -> VkResult {
+  return CreateObject<DeviceMemory>(device, pAllocateInfo, pAllocator, pMemory);
+}
+
 } // namespace vkx

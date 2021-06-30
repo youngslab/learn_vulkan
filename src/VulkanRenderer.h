@@ -71,7 +71,7 @@ private:
   std::vector<vkx::CommandBuffer> commandBuffers;
 
   vkx::Image depthBufferImage;
-  VkDeviceMemory depthBufferImageMemory;
+  vkx::DeviceMemory depthBufferImageMemory;
   vkx::ImageView depthBufferImageView;
 
   vkx::Sampler textureSampler;
@@ -87,10 +87,10 @@ private:
   std::vector<VkDescriptorSet> samplerDescriptorSets;
 
   std::vector<vkx::Buffer> vpUniformBuffer;
-  std::vector<VkDeviceMemory> vpUniformBufferMemory;
+  std::vector<vkx::DeviceMemory> vpUniformBufferMemory;
 
   std::vector<VkBuffer> modelDUniformBuffer;
-  std::vector<VkDeviceMemory> modelDUniformBufferMemory;
+  std::vector<vkx::DeviceMemory> modelDUniformBufferMemory;
 
   // VkDeviceSize minUniformBufferOffset;
   // size_t modelUniformAlignment;
@@ -99,7 +99,7 @@ private:
   // - Assets
 
   std::vector<vkx::Image> textureImages;
-  std::vector<VkDeviceMemory> textureImageMemory;
+  std::vector<vkx::DeviceMemory> textureImageMemory;
   std::vector<vkx::ImageView> textureImageViews;
 
   // - Pipeline
@@ -179,7 +179,7 @@ private:
   vkx::Image createImage(uint32_t width, uint32_t height, VkFormat format,
 			 VkImageTiling tiling, VkImageUsageFlags useFlags,
 			 VkMemoryPropertyFlags propFlags,
-			 VkDeviceMemory *imageMemory);
+			 vkx::DeviceMemory *imageMemory);
   vkx::ImageView createImageView(VkImage image, VkFormat format,
 				 VkImageAspectFlags aspectFlags);
   VkShaderModule createShaderModule(const std::vector<char> &code);

@@ -40,11 +40,11 @@ private:
 
   int vertexCount;
   vkx::Buffer vertexBuffer;
-  VkDeviceMemory vertexBufferMemory;
+  vkx::DeviceMemory vertexBufferMemory;
 
   int indexCount;
   vkx::Buffer indexBuffer;
-  VkDeviceMemory indexBufferMemory;
+  vkx::DeviceMemory indexBufferMemory;
 
   VkPhysicalDevice physicalDevice;
   vkx::Device device;

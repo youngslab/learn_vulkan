@@ -31,10 +31,7 @@ int Mesh::getIndexCount() { return indexCount; }
 
 vkx::Buffer Mesh::getIndexBuffer() { return indexBuffer; }
 
-void Mesh::destroyBuffers() {
-  vkFreeMemory(device, vertexBufferMemory, nullptr);
-  vkFreeMemory(device, indexBufferMemory, nullptr);
-}
+void Mesh::destroyBuffers() {}
 
 Mesh::~Mesh() {}
 
@@ -46,7 +43,7 @@ void Mesh::createVertexBuffer(VkQueue transferQueue,
 
   // Temporary buffer to "stage" vertex data before transferring to GPU
   vkx::Buffer stagingBuffer;
-  VkDeviceMemory stagingBufferMemory;
+  vkx::DeviceMemory stagingBufferMemory;
 
   // Create Staging Buffer and Allocate Memory to it
   createBuffer(physicalDevice, device, bufferSize,
@@ -76,9 +73,6 @@ void Mesh::createVertexBuffer(VkQueue transferQueue,
   // Copy staging buffer to vertex buffer on GPU
   copyBuffer(device, transferQueue, transferCommandPool, stagingBuffer,
 	     vertexBuffer, bufferSize);
-
-  // Clean up staging buffer parts
-  vkFreeMemory(device, stagingBufferMemory, nullptr);
 }
 
 void Mesh::createIndexBuffer(VkQueue transferQueue,
@@ -89,7 +83,7 @@ void Mesh::createIndexBuffer(VkQueue transferQueue,
 
   // Temporary buffer to "stage" index data before transferring to GPU
   vkx::Buffer stagingBuffer;
-  VkDeviceMemory stagingBufferMemory;
+  vkx::DeviceMemory stagingBufferMemory;
   createBuffer(physicalDevice, device, bufferSize,
 	       VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 	       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
@@ -111,6 +105,4 @@ void Mesh::createIndexBuffer(VkQueue transferQueue,
   // Copy from staging buffer to GPU access buffer
   copyBuffer(device, transferQueue, transferCommandPool, stagingBuffer,
 	     indexBuffer, bufferSize);
-
-  vkFreeMemory(device, stagingBufferMemory, nullptr);
 }

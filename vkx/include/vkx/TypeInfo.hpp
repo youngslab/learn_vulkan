@@ -86,6 +86,12 @@ template <> struct VulkanTypeInfo<VkSurfaceKHR> {
   static constexpr auto Name = "VkSurfaceKHR";
 };
 
+template <> struct VulkanTypeInfo<VkDeviceMemory> {
+  static constexpr auto Destroy = vkFreeMemory;
+  static constexpr auto Create = vkAllocateMemory;
+  static constexpr auto Name = "VkDeviceMemory";
+};
+
 // special case
 template <> struct VulkanTypeInfo<VkPipeline> {
   static constexpr auto Name = "VkPipeline";

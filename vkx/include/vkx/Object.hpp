@@ -68,5 +68,6 @@ using CommandPool = Object<VkCommandPool>;
 using CommandBuffer = Object<VkCommandBuffer>;
 using Sampler = Object<VkSampler>;
 using Buffer = Object<VkBuffer>;
+using DeviceMemory = Object<VkDeviceMemory>;
 
 } // namespace vkx
