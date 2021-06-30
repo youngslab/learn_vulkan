@@ -125,10 +125,6 @@ void VulkanRenderer::cleanup() {
 
   //_aligned_free(modelTransferSpace);
 
-  for (size_t i = 0; i < modelList.size(); i++) {
-    modelList[i].destroyMeshModel();
-  }
-
   vkDestroyDescriptorPool(mainDevice.logicalDevice, samplerDescriptorPool,
 			  nullptr);
 

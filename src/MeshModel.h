@@ -19,8 +19,6 @@ public:
   glm::mat4 getModel();
   void setModel(glm::mat4 newModel);
 
-  void destroyMeshModel();
-
   static std::vector<std::string> LoadMaterials(const aiScene *scene);
   static std::vector<Mesh>
   LoadNode(VkPhysicalDevice newPhysicalDevice, vkx::Device newDevice,

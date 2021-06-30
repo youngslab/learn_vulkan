@@ -21,12 +21,6 @@ glm::mat4 MeshModel::getModel() { return model; }
 
 void MeshModel::setModel(glm::mat4 newModel) { model = newModel; }
 
-void MeshModel::destroyMeshModel() {
-  for (auto &mesh : meshList) {
-    mesh.destroyBuffers();
-  }
-}
-
 std::vector<std::string> MeshModel::LoadMaterials(const aiScene *scene) {
   // Create 1:1 sized list of textures
   std::vector<std::string> textureList(scene->mNumMaterials);

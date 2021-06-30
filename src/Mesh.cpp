@@ -31,8 +31,6 @@ int Mesh::getIndexCount() { return indexCount; }
 
 vkx::Buffer Mesh::getIndexBuffer() { return indexBuffer; }
 
-void Mesh::destroyBuffers() {}
-
 Mesh::~Mesh() {}
 
 void Mesh::createVertexBuffer(VkQueue transferQueue,

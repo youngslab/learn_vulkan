@@ -30,8 +30,6 @@ public:
   int getIndexCount();
   vkx::Buffer getIndexBuffer();
 
-  void destroyBuffers();
-
   ~Mesh();
 
 private:
