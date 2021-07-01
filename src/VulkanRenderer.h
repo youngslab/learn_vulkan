@@ -112,9 +112,9 @@ private:
   VkExtent2D swapChainExtent;
 
   // - Synchronisation
-  std::vector<VkSemaphore> imageAvailable;
-  std::vector<VkSemaphore> renderFinished;
-  std::vector<VkFence> drawFences;
+  std::vector<vkx::Semaphore> imageAvailable;
+  std::vector<vkx::Semaphore> renderFinished;
+  std::vector<vkx::Fence> drawFences;
 
   // Vulkan Functions
   // - Create Functions

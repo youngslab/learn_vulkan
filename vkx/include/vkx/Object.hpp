@@ -71,5 +71,7 @@ using Buffer = Object<VkBuffer>;
 using DeviceMemory = Object<VkDeviceMemory>;
 using DescriptorPool = Object<VkDescriptorPool>;
 using DescriptorSet = Object<VkDescriptorSet>;
+using Semaphore = Object<VkSemaphore>;
+using Fence = Object<VkFence>;
 
 } // namespace vkx

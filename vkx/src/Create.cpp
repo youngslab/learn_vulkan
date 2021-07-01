@@ -140,6 +140,18 @@ auto CreateDescriptorPool(Device device,
 				      pDescriptorPool);
 }
 
+auto CreateSemaphore(Device device, const VkSemaphoreCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator,
+		     Semaphore *pSemaphore) -> VkResult {
+  return CreateObject<Semaphore>(device, pCreateInfo, pAllocator, pSemaphore);
+}
+
+auto CreateFence(Device device, const VkFenceCreateInfo *pCreateInfo,
+		 const VkAllocationCallbacks *pAllocator, Fence *pFence)
+    -> VkResult {
+  return CreateObject<Fence>(device, pCreateInfo, pAllocator, pFence);
+}
+
 auto AllocateCommandBuffers(Device device, CommandPool commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult {

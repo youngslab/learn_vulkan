@@ -56,7 +56,8 @@ DEFINE_VULKAN_TYPE_INFO(CommandPool);
 DEFINE_VULKAN_TYPE_INFO(Sampler);
 DEFINE_VULKAN_TYPE_INFO(Buffer);
 DEFINE_VULKAN_TYPE_INFO(DescriptorPool);
-
+DEFINE_VULKAN_TYPE_INFO(Semaphore);
+DEFINE_VULKAN_TYPE_INFO(Fence);
 // GLFW
 // Adaptor which provides the same way to create vulkan instance
 static auto CreateGLFWwindow(uint32_t w, uint32_t h, std::string title,

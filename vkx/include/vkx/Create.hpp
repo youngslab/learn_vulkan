@@ -84,6 +84,14 @@ auto CreateDescriptorPool(Device device,
 			  const VkAllocationCallbacks *pAllocator,
 			  DescriptorPool *pDescriptorPool) -> VkResult;
 
+auto CreateSemaphore(Device device, const VkSemaphoreCreateInfo *pCreateInfo,
+		     const VkAllocationCallbacks *pAllocator,
+		     Semaphore *pSemaphore) -> VkResult;
+
+auto CreateFence(Device device, const VkFenceCreateInfo *pCreateInfo,
+		 const VkAllocationCallbacks *pAllocator, Fence *pFence)
+    -> VkResult;
+
 auto AllocateCommandBuffers(Device device, CommandPool commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult;
