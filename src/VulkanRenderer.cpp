@@ -1153,8 +1153,9 @@ void VulkanRenderer::createDescriptorSets() {
       setLayouts.data(); // Layouts to use to allocate sets (1:1 relationship)
 
   // Allocate descriptor sets (multiple)
-  VkResult result = vkAllocateDescriptorSets(
-      mainDevice.logicalDevice, &setAllocInfo, descriptorSets.data());
+  VkResult result =
+      vkx::AllocateDescriptorSets(mainDevice.logicalDevice, descriptorPool,
+				  &setAllocInfo, descriptorSets.data());
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to allocate Descriptor Sets!");
   }
@@ -1862,7 +1863,7 @@ int VulkanRenderer::createTexture(std::string fileName) {
 }
 
 int VulkanRenderer::createTextureDescriptor(vkx::ImageView textureImage) {
-  VkDescriptorSet descriptorSet;
+  vkx::DescriptorSet descriptorSet;
 
   // Descriptor Set Allocation Info
   VkDescriptorSetAllocateInfo setAllocInfo = {};
@@ -1872,8 +1873,8 @@ int VulkanRenderer::createTextureDescriptor(vkx::ImageView textureImage) {
   setAllocInfo.pSetLayouts = samplerSetLayout.data();
 
   // Allocate Descriptor Sets
-  VkResult result = vkAllocateDescriptorSets(mainDevice.logicalDevice,
-					     &setAllocInfo, &descriptorSet);
+  VkResult result = vkx::AllocateDescriptorSets(
+      mainDevice.logicalDevice, descriptorPool, &setAllocInfo, &descriptorSet);
   if (result != VK_SUCCESS) {
     throw std::runtime_error("Failed to allocate Texture Descriptor Sets!");
   }

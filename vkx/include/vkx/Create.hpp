@@ -91,4 +91,8 @@ auto AllocateCommandBuffers(Device device, CommandPool commandPool,
 auto AllocateMemory(Device device, const VkMemoryAllocateInfo *pAllocateInfo,
 		    const VkAllocationCallbacks *pAllocator,
 		    DeviceMemory *pMemory) -> VkResult;
+
+auto AllocateDescriptorSets(Device device, DescriptorPool descriptorPool,
+			    const VkDescriptorSetAllocateInfo *pAllocateInfo,
+			    DescriptorSet *pDescriptorSets) -> VkResult;
 } // namespace vkx

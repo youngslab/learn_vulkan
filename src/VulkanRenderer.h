@@ -83,8 +83,8 @@ private:
 
   vkx::DescriptorPool descriptorPool;
   vkx::DescriptorPool samplerDescriptorPool;
-  std::vector<VkDescriptorSet> descriptorSets;
-  std::vector<VkDescriptorSet> samplerDescriptorSets;
+  std::vector<vkx::DescriptorSet> descriptorSets;
+  std::vector<vkx::DescriptorSet> samplerDescriptorSets;
 
   std::vector<vkx::Buffer> vpUniformBuffer;
   std::vector<vkx::DeviceMemory> vpUniformBufferMemory;

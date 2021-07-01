@@ -129,6 +129,19 @@ template <> struct VulkanTypeInfo<VkCommandBuffer> {
   static constexpr auto Create = AllocateCommandBuffers;
 };
 
+static auto
+AllocateDescriptorSets(VkDevice device, VkDescriptorPool,
+		       const VkDescriptorSetAllocateInfo *pAllocateInfo,
+		       VkDescriptorSet *pDescriptorSets) {
+  return vkAllocateDescriptorSets(device, pAllocateInfo, pDescriptorSets);
+}
+
+template <> struct VulkanTypeInfo<VkDescriptorSet> {
+  static constexpr auto Name = "VkDescriptorSet";
+  static constexpr auto Destroy = vkFreeDescriptorSets;
+  static constexpr auto Create = AllocateDescriptorSets;
+};
+
 template <typename Resource, typename... Args>
 auto CreateHandle(Args... args) -> Resource {
   Resource handle;
@@ -190,6 +203,15 @@ static auto CreateDeleter(VkDevice device, VkCommandPool commandPool,
     -> std::function<void(T)> {
   return [device, commandPool](T handle) {
     VulkanTypeInfo<T>::Destroy(device, commandPool, 1, &handle);
+  };
+}
+
+template <typename T>
+static auto CreateDeleter(VkDevice device, VkDescriptorPool descriptorPool,
+			  const VkDescriptorSetAllocateInfo *pAllocateInfo)
+    -> std::function<void(T)> {
+  return [device, descriptorPool](T handle) {
+    VulkanTypeInfo<T>::Destroy(device, descriptorPool, 1, &handle);
   };
 }
 

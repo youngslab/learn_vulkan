@@ -70,5 +70,6 @@ using Sampler = Object<VkSampler>;
 using Buffer = Object<VkBuffer>;
 using DeviceMemory = Object<VkDeviceMemory>;
 using DescriptorPool = Object<VkDescriptorPool>;
+using DescriptorSet = Object<VkDescriptorSet>;
 
 } // namespace vkx

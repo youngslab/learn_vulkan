@@ -162,4 +162,21 @@ auto AllocateMemory(Device device, const VkMemoryAllocateInfo *pAllocateInfo,
   return CreateObject<DeviceMemory>(device, pAllocateInfo, pAllocator, pMemory);
 }
 
+auto AllocateDescriptorSets(Device device, DescriptorPool descriptorPool,
+			    const VkDescriptorSetAllocateInfo *pAllocateInfo,
+			    DescriptorSet *pDescriptorSets) -> VkResult {
+
+  auto count = pAllocateInfo->descriptorSetCount;
+  auto res = VK_SUCCESS;
+  auto info = *pAllocateInfo;
+  info.descriptorSetCount = 1;
+  for (auto i = 0u; i < count; i++) {
+    res = CreateObject<DescriptorSet>(device, descriptorPool, &info,
+				      &pDescriptorSets[i]);
+    if (res != VK_SUCCESS)
+      return res;
+  }
+  return res;
+}
+
 } // namespace vkx
