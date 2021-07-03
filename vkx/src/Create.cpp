@@ -10,30 +10,20 @@ auto CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
   return CreateObject<Instance>(pCreateInfo, pAllocator, pObject);
 }
 
-auto CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
-		    const VkAllocationCallbacks *pAllocator) -> Instance {
-  Instance handle;
-  auto res = CreateInstance(pCreateInfo, pAllocator, &handle);
-  if (res != VK_SUCCESS) {
-    throw std::runtime_error("failed to create instance");
-  }
-  return handle;
-}
-
 auto CreateWindow(int width, int height, const char *title, Window *pWindow)
     -> VkResult {
   return CreateObject<Window>(width, height, title, pWindow);
 }
 
 auto CreateDebugReportCallbackEXT(
-    Instance instance, const VkDebugReportCallbackCreateInfoEXT *pCreateInfo,
+    Instance const &instance, const VkDebugReportCallbackCreateInfoEXT *pCreateInfo,
     const VkAllocationCallbacks *pAllocator, DebugReportCallbackEXT *pCallback)
     -> VkResult {
   return CreateObject<DebugReportCallbackEXT>(instance, pCreateInfo, pAllocator,
 					      pCallback);
 }
 
-auto CreateSurfaceKHR(Instance instance, Window window,
+auto CreateSurfaceKHR(Instance const &instance, Window const &window,
 		      const VkAllocationCallbacks *allocator,
 		      SurfaceKHR *surface) -> VkResult {
   return CreateObject<SurfaceKHR>(instance, window, allocator, surface);
@@ -46,7 +36,7 @@ auto CreateDevice(VkPhysicalDevice physicalDevice,
   return CreateObject<Device>(physicalDevice, pCreateInfo, pAllocator, pDevice);
 }
 
-auto CreateSwapchainKHR(Device device,
+auto CreateSwapchainKHR(Device const &device,
 			const VkSwapchainCreateInfoKHR *pCreateInfo,
 			const VkAllocationCallbacks *pAllocator,
 			SwapchainKHR *pSwapchain) -> VkResult {
@@ -54,21 +44,21 @@ auto CreateSwapchainKHR(Device device,
 				    pSwapchain);
 }
 
-auto CreateRenderPass(Device device, const VkRenderPassCreateInfo *pCreateInfo,
+auto CreateRenderPass(Device const &device, const VkRenderPassCreateInfo *pCreateInfo,
 		      const VkAllocationCallbacks *pAllocator,
 		      RenderPass *pRenderPass) -> VkResult {
   return CreateObject<RenderPass>(device, pCreateInfo, pAllocator, pRenderPass);
 }
 
 auto CreateDescriptorSetLayout(
-    Device device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
+    Device const &device, const VkDescriptorSetLayoutCreateInfo *pCreateInfo,
     const VkAllocationCallbacks *pAllocator, DescriptorSetLayout *pSetLayout)
     -> VkResult {
   return CreateObject<DescriptorSetLayout>(device, pCreateInfo, pAllocator,
 					   pSetLayout);
 }
 
-auto CreatePipelineLayout(Device device,
+auto CreatePipelineLayout(Device const &device,
 			  const VkPipelineLayoutCreateInfo *pCreateInfo,
 			  const VkAllocationCallbacks *pAllocator,
 			  PipelineLayout *pPipelineLayout) -> VkResult {
@@ -76,7 +66,7 @@ auto CreatePipelineLayout(Device device,
 				      pPipelineLayout);
 }
 
-auto CreateGraphicsPipelines(Device device, VkPipelineCache pipelineCache,
+auto CreateGraphicsPipelines(Device const &device, VkPipelineCache pipelineCache,
 			     uint32_t createInfoCount,
 			     const VkGraphicsPipelineCreateInfo *pCreateInfos,
 			     const VkAllocationCallbacks *pAllocator,
@@ -91,19 +81,19 @@ auto CreateGraphicsPipelines(Device device, VkPipelineCache pipelineCache,
   return res;
 }
 
-auto CreateImage(Device device, const VkImageCreateInfo *pCreateInfo,
+auto CreateImage(Device const &device, const VkImageCreateInfo *pCreateInfo,
 		 const VkAllocationCallbacks *pAllocator, Image *pImage)
     -> VkResult {
   return CreateObject<Image>(device, pCreateInfo, pAllocator, pImage);
 }
 
-auto CreateImageView(Device device, const VkImageViewCreateInfo *pCreateInfo,
+auto CreateImageView(Device const &device, const VkImageViewCreateInfo *pCreateInfo,
 		     const VkAllocationCallbacks *pAllocator, ImageView *pView)
     -> VkResult {
   return CreateObject<ImageView>(device, pCreateInfo, pAllocator, pView);
 }
 
-auto CreateFramebuffer(Device device,
+auto CreateFramebuffer(Device const &device,
 		       const VkFramebufferCreateInfo *pCreateInfo,
 		       const VkAllocationCallbacks *pAllocator,
 		       Framebuffer *pFramebuffer) -> VkResult {
@@ -111,7 +101,7 @@ auto CreateFramebuffer(Device device,
 				   pFramebuffer);
 }
 
-auto CreateCommandPool(Device device,
+auto CreateCommandPool(Device const &device,
 		       const VkCommandPoolCreateInfo *pCreateInfo,
 		       const VkAllocationCallbacks *pAllocator,
 		       CommandPool *pCommandPool) -> VkResult {
@@ -119,19 +109,19 @@ auto CreateCommandPool(Device device,
 				   pCommandPool);
 }
 
-auto CreateSampler(Device device, const VkSamplerCreateInfo *pCreateInfo,
+auto CreateSampler(Device const &device, const VkSamplerCreateInfo *pCreateInfo,
 		   const VkAllocationCallbacks *pAllocator, Sampler *pSampler)
     -> VkResult {
   return CreateObject<Sampler>(device, pCreateInfo, pAllocator, pSampler);
 }
 
-auto CreateBuffer(Device device, const VkBufferCreateInfo *pCreateInfo,
+auto CreateBuffer(Device const &device, const VkBufferCreateInfo *pCreateInfo,
 		  const VkAllocationCallbacks *pAllocator, Buffer *pBuffer)
     -> VkResult {
   return CreateObject<Buffer>(device, pCreateInfo, pAllocator, pBuffer);
 }
 
-auto CreateDescriptorPool(Device device,
+auto CreateDescriptorPool(Device const &device,
 			  const VkDescriptorPoolCreateInfo *pCreateInfo,
 			  const VkAllocationCallbacks *pAllocator,
 			  DescriptorPool *pDescriptorPool) -> VkResult {
@@ -139,19 +129,19 @@ auto CreateDescriptorPool(Device device,
 				      pDescriptorPool);
 }
 
-auto CreateSemaphore(Device device, const VkSemaphoreCreateInfo *pCreateInfo,
+auto CreateSemaphore(Device const &device, const VkSemaphoreCreateInfo *pCreateInfo,
 		     const VkAllocationCallbacks *pAllocator,
 		     Semaphore *pSemaphore) -> VkResult {
   return CreateObject<Semaphore>(device, pCreateInfo, pAllocator, pSemaphore);
 }
 
-auto CreateFence(Device device, const VkFenceCreateInfo *pCreateInfo,
+auto CreateFence(Device const &device, const VkFenceCreateInfo *pCreateInfo,
 		 const VkAllocationCallbacks *pAllocator, Fence *pFence)
     -> VkResult {
   return CreateObject<Fence>(device, pCreateInfo, pAllocator, pFence);
 }
 
-auto AllocateCommandBuffers(Device device, CommandPool commandPool,
+auto AllocateCommandBuffers(Device const &device, CommandPool const &commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult {
   auto count = pAllocateInfo->commandBufferCount;
@@ -167,13 +157,13 @@ auto AllocateCommandBuffers(Device device, CommandPool commandPool,
   return res;
 }
 
-auto AllocateMemory(Device device, const VkMemoryAllocateInfo *pAllocateInfo,
+auto AllocateMemory(Device const &device, const VkMemoryAllocateInfo *pAllocateInfo,
 		    const VkAllocationCallbacks *pAllocator,
 		    DeviceMemory *pMemory) -> VkResult {
   return CreateObject<DeviceMemory>(device, pAllocateInfo, pAllocator, pMemory);
 }
 
-auto AllocateDescriptorSets(Device device, DescriptorPool descriptorPool,
+auto AllocateDescriptorSets(Device const &device, DescriptorPool const &descriptorPool,
 			    const VkDescriptorSetAllocateInfo *pAllocateInfo,
 			    DescriptorSet *pDescriptorSets) -> VkResult {
 
