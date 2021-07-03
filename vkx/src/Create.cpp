@@ -8,7 +8,6 @@ auto CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
 		    const VkAllocationCallbacks *pAllocator, Instance *pObject)
     -> VkResult {
   return CreateObject<Instance>(pCreateInfo, pAllocator, pObject);
-  // return CreateObject2<VkInstance>(pCreateInfo, pAllocator, pObject);
 }
 
 auto CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
@@ -24,15 +23,12 @@ auto CreateInstance(const VkInstanceCreateInfo *pCreateInfo,
 auto CreateWindow(int width, int height, const char *title, Window *pWindow)
     -> VkResult {
   return CreateObject<Window>(width, height, title, pWindow);
-  // return CreateObject2<GLFWwindow*>(width, height, title, pWindow);
 }
 
 auto CreateDebugReportCallbackEXT(
     Instance instance, const VkDebugReportCallbackCreateInfoEXT *pCreateInfo,
     const VkAllocationCallbacks *pAllocator, DebugReportCallbackEXT *pCallback)
     -> VkResult {
-  // return CreateObject2<VkDebugReportCallbackEXT>(instance, pCreateInfo,
-  // pAllocator, pCallback);
   return CreateObject<DebugReportCallbackEXT>(instance, pCreateInfo, pAllocator,
 					      pCallback);
 }
@@ -41,7 +37,6 @@ auto CreateSurfaceKHR(Instance instance, Window window,
 		      const VkAllocationCallbacks *allocator,
 		      SurfaceKHR *surface) -> VkResult {
   return CreateObject<SurfaceKHR>(instance, window, allocator, surface);
-  // return CreateObject2<VkSurfaceKHR>(instance, window, allocator, surface);
 }
 
 auto CreateDevice(VkPhysicalDevice physicalDevice,
@@ -86,9 +81,14 @@ auto CreateGraphicsPipelines(Device device, VkPipelineCache pipelineCache,
 			     const VkGraphicsPipelineCreateInfo *pCreateInfos,
 			     const VkAllocationCallbacks *pAllocator,
 			     Pipeline *pPipelines) -> VkResult {
-  // TODO: Supprots creating multiple instnace.
-  return CreateObject<Pipeline>(device, pipelineCache, createInfoCount,
-				pCreateInfos, pAllocator, pPipelines);
+  auto res = VK_SUCCESS;
+  for (int i = 0; i < createInfoCount; i++) {
+    auto res = CreateObject<Pipeline>(device, pipelineCache, 1, &pCreateInfos[i],
+				      pAllocator, &pPipelines[i]);
+    if (res != VK_SUCCESS)
+      return res;
+  }
+  return res;
 }
 
 auto CreateImage(Device device, const VkImageCreateInfo *pCreateInfo,
@@ -115,7 +115,6 @@ auto CreateCommandPool(Device device,
 		       const VkCommandPoolCreateInfo *pCreateInfo,
 		       const VkAllocationCallbacks *pAllocator,
 		       CommandPool *pCommandPool) -> VkResult {
-
   return CreateObject<CommandPool>(device, pCreateInfo, pAllocator,
 				   pCommandPool);
 }
