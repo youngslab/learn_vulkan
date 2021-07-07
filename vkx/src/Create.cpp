@@ -16,7 +16,8 @@ auto CreateWindow(int width, int height, const char *title, Window *pWindow)
 }
 
 auto CreateDebugReportCallbackEXT(
-    Instance const &instance, const VkDebugReportCallbackCreateInfoEXT *pCreateInfo,
+    Instance const &instance,
+    const VkDebugReportCallbackCreateInfoEXT *pCreateInfo,
     const VkAllocationCallbacks *pAllocator, DebugReportCallbackEXT *pCallback)
     -> VkResult {
   return CreateObject<DebugReportCallbackEXT>(instance, pCreateInfo, pAllocator,
@@ -44,7 +45,8 @@ auto CreateSwapchainKHR(Device const &device,
 				    pSwapchain);
 }
 
-auto CreateRenderPass(Device const &device, const VkRenderPassCreateInfo *pCreateInfo,
+auto CreateRenderPass(Device const &device,
+		      const VkRenderPassCreateInfo *pCreateInfo,
 		      const VkAllocationCallbacks *pAllocator,
 		      RenderPass *pRenderPass) -> VkResult {
   return CreateObject<RenderPass>(device, pCreateInfo, pAllocator, pRenderPass);
@@ -66,15 +68,16 @@ auto CreatePipelineLayout(Device const &device,
 				      pPipelineLayout);
 }
 
-auto CreateGraphicsPipelines(Device const &device, VkPipelineCache pipelineCache,
+auto CreateGraphicsPipelines(Device const &device,
+			     VkPipelineCache pipelineCache,
 			     uint32_t createInfoCount,
 			     const VkGraphicsPipelineCreateInfo *pCreateInfos,
 			     const VkAllocationCallbacks *pAllocator,
 			     Pipeline *pPipelines) -> VkResult {
   auto res = VK_SUCCESS;
   for (int i = 0; i < createInfoCount; i++) {
-    auto res = CreateObject<Pipeline>(device, pipelineCache, 1, &pCreateInfos[i],
-				      pAllocator, &pPipelines[i]);
+    auto res = CreateObject<Pipeline>(
+	device, pipelineCache, 1, &pCreateInfos[i], pAllocator, &pPipelines[i]);
     if (res != VK_SUCCESS)
       return res;
   }
@@ -87,7 +90,8 @@ auto CreateImage(Device const &device, const VkImageCreateInfo *pCreateInfo,
   return CreateObject<Image>(device, pCreateInfo, pAllocator, pImage);
 }
 
-auto CreateImageView(Device const &device, const VkImageViewCreateInfo *pCreateInfo,
+auto CreateImageView(Device const &device,
+		     const VkImageViewCreateInfo *pCreateInfo,
 		     const VkAllocationCallbacks *pAllocator, ImageView *pView)
     -> VkResult {
   return CreateObject<ImageView>(device, pCreateInfo, pAllocator, pView);
@@ -129,7 +133,8 @@ auto CreateDescriptorPool(Device const &device,
 				      pDescriptorPool);
 }
 
-auto CreateSemaphore(Device const &device, const VkSemaphoreCreateInfo *pCreateInfo,
+auto CreateSemaphore(Device const &device,
+		     const VkSemaphoreCreateInfo *pCreateInfo,
 		     const VkAllocationCallbacks *pAllocator,
 		     Semaphore *pSemaphore) -> VkResult {
   return CreateObject<Semaphore>(device, pCreateInfo, pAllocator, pSemaphore);
@@ -141,7 +146,8 @@ auto CreateFence(Device const &device, const VkFenceCreateInfo *pCreateInfo,
   return CreateObject<Fence>(device, pCreateInfo, pAllocator, pFence);
 }
 
-auto AllocateCommandBuffers(Device const &device, CommandPool const &commandPool,
+auto AllocateCommandBuffers(Device const &device,
+			    CommandPool const &commandPool,
 			    const VkCommandBufferAllocateInfo *pAllocateInfo,
 			    CommandBuffer *pCommandBuffers) -> VkResult {
   auto count = pAllocateInfo->commandBufferCount;
@@ -157,13 +163,15 @@ auto AllocateCommandBuffers(Device const &device, CommandPool const &commandPool
   return res;
 }
 
-auto AllocateMemory(Device const &device, const VkMemoryAllocateInfo *pAllocateInfo,
+auto AllocateMemory(Device const &device,
+		    const VkMemoryAllocateInfo *pAllocateInfo,
 		    const VkAllocationCallbacks *pAllocator,
 		    DeviceMemory *pMemory) -> VkResult {
   return CreateObject<DeviceMemory>(device, pAllocateInfo, pAllocator, pMemory);
 }
 
-auto AllocateDescriptorSets(Device const &device, DescriptorPool const &descriptorPool,
+auto AllocateDescriptorSets(Device const &device,
+			    DescriptorPool const &descriptorPool,
 			    const VkDescriptorSetAllocateInfo *pAllocateInfo,
 			    DescriptorSet *pDescriptorSets) -> VkResult {
 
@@ -178,6 +186,11 @@ auto AllocateDescriptorSets(Device const &device, DescriptorPool const &descript
       return res;
   }
   return res;
+}
+
+template <typename T> auto ConvertNative(std::vector<T> const &objects) {
+  return std::transform(objects.begin(), objects.end(),
+			[](T const &object) { return object.GetValue(); });
 }
 
 } // namespace vkx

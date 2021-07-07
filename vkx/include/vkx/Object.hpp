@@ -20,6 +20,8 @@ private:
   template <typename T> void DependIf(T t) {}
 
 public:
+  using ResouceType = Resource;
+
   Object() {}
 
   Object(Object const &rhs) : AutoDeletable<Resource>(rhs), Dependable(rhs) {}
@@ -41,7 +43,7 @@ public:
 
 // Abstract the way to create vulkan objects.
 template <typename ObjectType, typename... Args> //
-auto CreateObject(Args... args) -> VkResult {
+auto CreateObject(Args &&...args) -> VkResult {
   ObjectType *pObject = get_last(args...);
   try {
     *pObject = std::apply(make_object<ObjectType>{}, drop_last(args...));

@@ -22,7 +22,8 @@ public:
   operator T() const & { return *_storage; }
   operator T() const && = delete;
 
-  T *data() { return _storage.get(); }
+  T *GetPointer() { return _storage.get(); }
+  T GetValue() { return *this; }
 };
 
 template <typename T>
@@ -30,6 +31,5 @@ auto MakeAutoDeletable(T handle, std::function<void(T)> deleter)
     -> AutoDeletable<T> {
   return AutoDeletable(handle, deleter);
 }
-
 
 } // namespace vkx
