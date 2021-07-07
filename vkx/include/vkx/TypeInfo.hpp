@@ -62,9 +62,6 @@ DEFINE_VULKAN_TYPE_INFO(Fence);
 // Adaptor which provides the same way to create vulkan instance
 static auto CreateGLFWwindow(uint32_t w, uint32_t h, std::string title,
 			     GLFWwindow **window) -> VkResult {
-  glfwInit();
-  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-  glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
   *window = glfwCreateWindow(w, h, title.c_str(), nullptr, nullptr);
   if (!window)
     return VK_ERROR_UNKNOWN;
@@ -73,7 +70,6 @@ static auto CreateGLFWwindow(uint32_t w, uint32_t h, std::string title,
 
 static auto DeleteGLFWwindow(GLFWwindow *w) -> void {
   glfwDestroyWindow(w);
-  glfwTerminate();
 }
 
 template <> struct VulkanTypeInfo<GLFWwindow *> {
