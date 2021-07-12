@@ -10,6 +10,12 @@
 #include <vulkan/vulkan_core.h>
 #include <vkx/Ext.hpp>
 
+#if VKX_PRINT_LOG
+constexpr static bool vkx_print_log = 1;
+#else
+constexpr static bool vkx_print_log = 0;
+#endif
+
 namespace vkx {
 
 template <typename T> struct VulkanTypeInfo;
@@ -43,7 +49,6 @@ template <typename T> struct VulkanTypeInfo;
 
 DEFINE_VULKAN_TYPE_INFO(Instance);
 DEFINE_VULKAN_TYPE_INFO_EXT(DebugReportCallback);
-// DEFINE_VULKAN_TYPE_INFO_KHR(Surface); defined manully
 DEFINE_VULKAN_TYPE_INFO(Device);
 DEFINE_VULKAN_TYPE_INFO(Image);
 DEFINE_VULKAN_TYPE_INFO(ImageView);
@@ -68,9 +73,7 @@ static auto CreateGLFWwindow(uint32_t w, uint32_t h, std::string title,
   return VK_SUCCESS;
 }
 
-static auto DeleteGLFWwindow(GLFWwindow *w) -> void {
-  glfwDestroyWindow(w);
-}
+static auto DeleteGLFWwindow(GLFWwindow *w) -> void { glfwDestroyWindow(w); }
 
 template <> struct VulkanTypeInfo<GLFWwindow *> {
   static constexpr auto Create = CreateGLFWwindow;
@@ -148,8 +151,16 @@ auto CreateHandle(Args... args) -> Resource {
     throw std::runtime_error(std::string("Failed to create a handle - ") +
 			     VulkanTypeInfo<Resource>::Name);
   }
+
+  if constexpr (vkx_print_log) {
+    std::cout << "[vkx] create a handle (" << handle
+	      << "): " << VulkanTypeInfo<Resource>::Name << "\n";
+  }
+
   return handle;
 }
+
+namespace detail {
 
 template <typename T, typename Dependency, typename CreateInfo>
 static auto CreateDeleter(Dependency dep, CreateInfo,
@@ -212,13 +223,20 @@ static auto CreateDeleter(VkDevice device, VkDescriptorPool descriptorPool,
   };
 }
 
+} // namespace detail
+
 template <typename T, typename... Args>
-static auto CreateDeleterDebug(Args... args) -> std::function<void(T)> {
-  auto deleter = CreateDeleter<T>(args...);
-  return [deleter](T handle) {
-    std::cout << "delete " << VulkanTypeInfo<T>::Name << "\n";
-    deleter(handle);
-  };
+static auto CreateDeleter(Args... args) -> std::function<void(T)> {
+  if constexpr (vkx_print_log) {
+    auto deleter = detail::CreateDeleter<T>(args...);
+    return [deleter](T handle) {
+      std::cout << "[vkx] delete a handle (" << handle
+		<< "): " << VulkanTypeInfo<T>::Name << "\n";
+      deleter(handle);
+    };
+  } else {
+    return detail::CreateDeleter<T>(args...);
+  }
 }
 
 } // namespace vkx

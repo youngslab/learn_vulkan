@@ -35,7 +35,7 @@ public:
   template <typename... Args>
   Object(Args... args)
       : AutoDeletable<Resource>(CreateHandle<Resource>(args...),
-				CreateDeleterDebug<Resource>(args...)) {
+				CreateDeleter<Resource>(args...)) {
     bool z[] = {(this->DependIf(args), true)...};
     (void)z;
   }
