@@ -24,7 +24,7 @@ find_package(Vulkan REQUIRED)
 find_package(IrrXML REQUIRED)
 find_package(Assimp REQUIRED)
 
-add_subdirectory(vkx)
+add_subdirectory(thirdparty)
 
 add_executable(learn_vulkan src/main.cpp src/VulkanRenderer.cpp src/Mesh.cpp
 	src/MeshModel.cpp)
