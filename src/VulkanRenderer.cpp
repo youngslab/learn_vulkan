@@ -1,4 +1,5 @@
 #include "VulkanRenderer.h"
+#include "vkx/Enumerate.hpp"
 #include <vulkan/vulkan_core.h>
 
 VulkanRenderer::VulkanRenderer() {}
@@ -58,12 +59,10 @@ void VulkanRenderer::updateModel(int modelId, glm::mat4 newModel) {
 void VulkanRenderer::draw() {
   // -- GET NEXT IMAGE --
   // Wait for given fence to signal (open) from last draw before continuing
-  vkWaitForFences(mainDevice.logicalDevice, 1,
-		  drawFences[currentFrame].data(), VK_TRUE,
-		  std::numeric_limits<uint64_t>::max());
+  vkWaitForFences(mainDevice.logicalDevice, 1, drawFences[currentFrame].data(),
+		  VK_TRUE, std::numeric_limits<uint64_t>::max());
   // Manually reset (close) fences
-  vkResetFences(mainDevice.logicalDevice, 1,
-		drawFences[currentFrame].data());
+  vkResetFences(mainDevice.logicalDevice, 1, drawFences[currentFrame].data());
 
   // Get index of next image to be drawn to, and signal semaphore when ready to
   // be drawn to
@@ -81,18 +80,17 @@ void VulkanRenderer::draw() {
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
   submitInfo.waitSemaphoreCount = 1; // Number of semaphores to wait on
   submitInfo.pWaitSemaphores =
-      imageAvailable[currentFrame]
-	  .data(); // List of semaphores to wait on
+      imageAvailable[currentFrame].data(); // List of semaphores to wait on
   VkPipelineStageFlags waitStages[] = {
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   submitInfo.pWaitDstStageMask = waitStages; // Stages to check semaphores at
   submitInfo.commandBufferCount = 1; // Number of command buffers to submit
   submitInfo.pCommandBuffers =
       commandBuffers[imageIndex].data(); // Command buffer to submit
-  submitInfo.signalSemaphoreCount = 1;	       // Number of semaphores to signal
+  submitInfo.signalSemaphoreCount = 1;	 // Number of semaphores to signal
   submitInfo.pSignalSemaphores =
       renderFinished[currentFrame].data(); // Semaphores to signal when
-						 // command buffer finishes
+					   // command buffer finishes
 
   // Submit command buffer to queue
   VkResult result =
@@ -107,9 +105,8 @@ void VulkanRenderer::draw() {
   presentInfo.waitSemaphoreCount = 1; // Number of semaphores to wait on
   presentInfo.pWaitSemaphores =
       renderFinished[currentFrame].data(); // Semaphores to wait on
-  presentInfo.swapchainCount = 1; // Number of swapchains to present to
-  presentInfo.pSwapchains =
-      swapchain.data(); // Swapchains to present images to
+  presentInfo.swapchainCount = 1;	   // Number of swapchains to present to
+  presentInfo.pSwapchains = swapchain.data(); // Swapchains to present images to
   presentInfo.pImageIndices =
       &imageIndex; // Index of images in swapchains to present
 
@@ -1327,17 +1324,7 @@ void VulkanRenderer::recordCommands(uint32_t currentImage) {
 
 void VulkanRenderer::getPhysicalDevice() {
   // Enumerate Physical devices the vkInstance can access
-  uint32_t deviceCount = 0;
-  vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-
-  // If no devices available, then none support Vulkan!
-  if (deviceCount == 0) {
-    throw std::runtime_error("Can't find GPUs that support Vulkan Instance!");
-  }
-
-  // Get list of Physical Devices
-  std::vector<VkPhysicalDevice> deviceList(deviceCount);
-  vkEnumeratePhysicalDevices(instance, &deviceCount, deviceList.data());
+  auto deviceList = vkx::EnumeratePhysicalDevices(instance);
 
   for (const auto &device : deviceList) {
     if (checkDeviceSuitable(device)) {
@@ -1370,13 +1357,7 @@ bool VulkanRenderer::checkInstanceExtensionSupport(
     std::vector<const char *> *checkExtensions) {
   // Need to get number of extensions to create array of correct size to hold
   // extensions
-  uint32_t extensionCount = 0;
-  vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-  // Create a list of VkExtensionProperties using count
-  std::vector<VkExtensionProperties> extensions(extensionCount);
-  vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
-					 extensions.data());
+  auto extensions = vkx::EnumerateInstanceExtensionProperties(nullptr);
 
   // Check if given extensions are in list of available extensions
   for (const auto &checkExtension : *checkExtensions) {
@@ -1398,19 +1379,7 @@ bool VulkanRenderer::checkInstanceExtensionSupport(
 
 bool VulkanRenderer::checkDeviceExtensionSupport(VkPhysicalDevice device) {
   // Get device extension count
-  uint32_t extensionCount = 0;
-  vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount,
-				       nullptr);
-
-  // If no extensions found, return failure
-  if (extensionCount == 0) {
-    return false;
-  }
-
-  // Populate list of extensions
-  std::vector<VkExtensionProperties> extensions(extensionCount);
-  vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount,
-				       extensions.data());
+  auto extensions = vkx::EnumerateDeviceExtensionProperties(device, nullptr);
 
   // Check for extension
   for (const auto &deviceExtension : deviceExtensions) {
@@ -1431,18 +1400,7 @@ bool VulkanRenderer::checkDeviceExtensionSupport(VkPhysicalDevice device) {
 }
 
 bool VulkanRenderer::checkValidationLayerSupport() {
-  // Get number of validation layers to create vector of appropriate size
-  uint32_t validationLayerCount;
-  vkEnumerateInstanceLayerProperties(&validationLayerCount, nullptr);
-
-  // Check if no validation layers found AND we want at least 1 layer
-  if (validationLayerCount == 0 && validationLayers.size() > 0) {
-    return false;
-  }
-
-  std::vector<VkLayerProperties> availableLayers(validationLayerCount);
-  vkEnumerateInstanceLayerProperties(&validationLayerCount,
-				     availableLayers.data());
+  auto availableLayers = vkx::EnumerateInstanceLayerProperties();
 
   // Check if given Validation Layer is in list of given Validation Layers
   for (const auto &validationLayer : validationLayers) {
