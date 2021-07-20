@@ -59,11 +59,11 @@ void VulkanRenderer::draw() {
   // -- GET NEXT IMAGE --
   // Wait for given fence to signal (open) from last draw before continuing
   vkWaitForFences(mainDevice.logicalDevice, 1,
-		  drawFences[currentFrame].GetPointer(), VK_TRUE,
+		  drawFences[currentFrame].data(), VK_TRUE,
 		  std::numeric_limits<uint64_t>::max());
   // Manually reset (close) fences
   vkResetFences(mainDevice.logicalDevice, 1,
-		drawFences[currentFrame].GetPointer());
+		drawFences[currentFrame].data());
 
   // Get index of next image to be drawn to, and signal semaphore when ready to
   // be drawn to
@@ -82,16 +82,16 @@ void VulkanRenderer::draw() {
   submitInfo.waitSemaphoreCount = 1; // Number of semaphores to wait on
   submitInfo.pWaitSemaphores =
       imageAvailable[currentFrame]
-	  .GetPointer(); // List of semaphores to wait on
+	  .data(); // List of semaphores to wait on
   VkPipelineStageFlags waitStages[] = {
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   submitInfo.pWaitDstStageMask = waitStages; // Stages to check semaphores at
   submitInfo.commandBufferCount = 1; // Number of command buffers to submit
   submitInfo.pCommandBuffers =
-      commandBuffers[imageIndex].GetPointer(); // Command buffer to submit
+      commandBuffers[imageIndex].data(); // Command buffer to submit
   submitInfo.signalSemaphoreCount = 1;	       // Number of semaphores to signal
   submitInfo.pSignalSemaphores =
-      renderFinished[currentFrame].GetPointer(); // Semaphores to signal when
+      renderFinished[currentFrame].data(); // Semaphores to signal when
 						 // command buffer finishes
 
   // Submit command buffer to queue
@@ -106,10 +106,10 @@ void VulkanRenderer::draw() {
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   presentInfo.waitSemaphoreCount = 1; // Number of semaphores to wait on
   presentInfo.pWaitSemaphores =
-      renderFinished[currentFrame].GetPointer(); // Semaphores to wait on
+      renderFinished[currentFrame].data(); // Semaphores to wait on
   presentInfo.swapchainCount = 1; // Number of swapchains to present to
   presentInfo.pSwapchains =
-      swapchain.GetPointer(); // Swapchains to present images to
+      swapchain.data(); // Swapchains to present images to
   presentInfo.pImageIndices =
       &imageIndex; // Index of images in swapchains to present
 
@@ -1285,7 +1285,7 @@ void VulkanRenderer::recordCommands(uint32_t currentImage) {
       auto vertexBuffer = thisModel.getMesh(k)->getVertexBuffer();
       VkDeviceSize offsets[] = {0}; // Offsets into buffers being bound
       vkCmdBindVertexBuffers(
-	  commandBuffers[currentImage], 0, 1, vertexBuffer.GetPointer(),
+	  commandBuffers[currentImage], 0, 1, vertexBuffer.data(),
 	  offsets); // Command to bind vertex buffer before drawing with them
 
       auto indexBuffer = thisModel.getMesh(k)->getIndexBuffer();
@@ -1868,7 +1868,7 @@ int VulkanRenderer::createTextureDescriptor(vkx::ImageView textureImage) {
   setAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
   setAllocInfo.descriptorPool = samplerDescriptorPool;
   setAllocInfo.descriptorSetCount = 1;
-  setAllocInfo.pSetLayouts = samplerSetLayout.GetPointer();
+  setAllocInfo.pSetLayouts = samplerSetLayout.data();
 
   // Allocate Descriptor Sets
   VkResult result = vkx::AllocateDescriptorSets(
