@@ -1,3 +1,4 @@
 [submodule "thirdparty/vkx"]
 	path = thirdparty/vkx
 	url = https://github.com/youngslab/vkx.git
+	branch = main
